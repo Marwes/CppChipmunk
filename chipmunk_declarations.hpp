@@ -1,0 +1,29 @@
+#pragma once
+//Forward declarations
+namespace cp{
+	class Constraint;
+	class Arbiter;
+	class RatchetJoint;
+	class BBTree;
+	class Body;
+	class SpaceHash;
+	class Shape;
+	class PinJoint;
+	class GearJoint;
+	class Sweep1D;
+	class SimpleMotor;
+	class DampedRotarySpring;
+	class PivotJoint;
+	class SpatialIndex;
+	class BB;
+	class Space;
+	class Vect;
+	class SlideJoint;
+	class DampedSpring;
+	class SegmentShape;
+	class PolyShape;
+	class GrooveJoint;
+	class CircleShape;
+	class RotaryLimitJoint;
+}
+
