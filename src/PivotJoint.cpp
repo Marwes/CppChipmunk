@@ -1,5 +1,7 @@
 /* 
- * Chipmunk binding for c++ automatically generated on 09/09/12 16:29:46.
+ * Licensed under the MIT License (See the file LICENSE in the root directory).
+ *
+ * Chipmunk binding for c++ automatically generated on 09/09/12 16:52:11.
  */
 #include "PivotJoint.hpp"
 #include "chipmunk.h"

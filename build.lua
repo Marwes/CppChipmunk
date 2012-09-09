@@ -24,6 +24,8 @@ end
 local timestamp = 
 [[
 /* 
+ * Licensed under the MIT License (See the file LICENSE in the root directory).
+ *
  * Chipmunk binding for c++ automatically generated on ]]..os.date()..[[.
  */
 ]]
