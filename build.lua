@@ -6,13 +6,28 @@ local chipmunkPath = "../Chipmunk-6.1.1/include/chipmunk"
 local namespace = "cp"
 
 
-
 local io = require "io"
-local lfs = require "lfs"
 local table = require "table"
+
+
+local lfs = require "lfs"
 local lpeg = require "lpeg"
 lpeg.locale(lpeg)
 local space = lpeg.space + lpeg.S"\t\n"
+
+if not lfs.attributes(outFolder) then
+	lfs.mkdir(outFolder)
+	lfs.mkdir(outFolder.."src")
+	lfs.mkdir(outFolder.."include")
+end
+
+local timestamp = 
+[[
+/* 
+ * Chipmunk binding for c++ automatically generated on ]]..os.date()..[[.
+ */
+]]
+
 
 --Table holding all the classes (structs) that are found
 local classes = {}
@@ -24,6 +39,25 @@ local functionHooks = {
 	function ( returnType, functionName, argTable  )
 		if functionName == "cpBodySanityCheck" then
 			return ""
+		end
+	end
+	,
+	function ( returnType, functionName, argTable  ) --Hacked in until I know how to deal with this constructor
+		if functionName == "cpPolyShapeNew" then
+			local _, struct = getMethod(functionName)
+			local initializerList = {{
+				lvalue="Shape",
+				rvalue=functionName.."("..makeRawArguments(argTable):gsub("body", "body ? body->get() : 0")..")"
+			}}
+			argTable[1].type = getNamespace().."Body *"
+			return Method:new(
+				{ returnType="",
+				  name="PolyShape", 
+				  body="",
+				  parameters=argTable,
+				  initializerList=initializerList
+				  }),
+				  struct
 		end
 	end
 	,
@@ -388,7 +422,7 @@ function writeDeclarations()
 	end
 	declarationText = declarationText.."}\n\n"
 
-	writeFile(outFolder.."chipmunk_declarations.hpp", declarationText)
+	writeFile(outFolder.."include/".."chipmunk_declarations.hpp", declarationText)
 end
 
 function writeIncludeAll()
@@ -402,9 +436,8 @@ function writeIncludeAll()
 		end
 	end
 
-	writeFile(outFolder.."chipmunk.hpp", includeAllText)
+	writeFile(outFolder.."include/".."chipmunk.hpp", includeAllText)
 end
-
 
 
 --Writes all the class files using the global table 'classes'
@@ -420,7 +453,7 @@ function writeClasses( )
 			local className = struct:sub(3)
 			local outName = className..".hpp"
 
-			writeFile(outFolder..outName, "#pragma once\n\n"..class:make())
+			writeFile(outFolder.."include/"..outName, "#pragma once\n\n"..class:make())
 
 			local cppFileText = "#include \""..outName.."\"\n"
 			cppFileText = cppFileText..class:makeIncludes()
@@ -433,14 +466,14 @@ function writeClasses( )
 
 			cppFileText = cppFileText..class:makeAnonymousDefinitions()
 
-			writeFile(outFolder..outName:gsub("hpp$", "cpp"), cppFileText)
+			writeFile(outFolder.."src/"..outName:gsub("hpp$", "cpp"), cppFileText)
 		end
 	end
 end
 
 --Compares the text with what is already there to determine if we need to update it
---TODO : Should maybe compare timestamps instead
 function writeFile( filename, text )
+	text = timestamp..text
 	local f = io.open(filename)
 	local previousText = nil
 	if f then
@@ -534,6 +567,11 @@ function copyTable( tab )
 		end
 	end
 	return c
+end
+
+function getNamespace( )
+	if not namespace or namespace == "" then return "" end
+	return namespace.."::"
 end
 
 Method = {}
