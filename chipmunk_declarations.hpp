@@ -3,7 +3,7 @@
 namespace cp{
 	class Constraint;
 	class Arbiter;
-	class RatchetJoint;
+	class PivotJoint;
 	class BBTree;
 	class Body;
 	class SpaceHash;
@@ -13,10 +13,10 @@ namespace cp{
 	class Sweep1D;
 	class SimpleMotor;
 	class DampedRotarySpring;
-	class PivotJoint;
 	class SpatialIndex;
 	class BB;
 	class Space;
+	class RatchetJoint;
 	class Vect;
 	class SlideJoint;
 	class DampedSpring;

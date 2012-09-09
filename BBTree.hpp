@@ -1,40 +1,20 @@
 #pragma once
 
 #include "chipmunk.h"
+#include "chipmunk_declarations.hpp"
+#include "SpatialIndex.hpp"
 #include "SpatialIndex.hpp"
 
 namespace cp {
 
-
-class BBTree : public SpatialIndex{
+class BBTree : public SpatialIndex {
 protected:
-	cpBBTree*bbtree;
+	cpBBTree* bbtree;
 public:
-
-	cpBBTree* get() const
-	{
-		return bbtree;
-	}
-
-	operator cpBBTree*() const
-	{
-		return bbtree;
-	}
-
-	inline void optimize()
-	{
-		cpBBTreeOptimize(index);
-	}
-
-	inline void setVelocityFunc(cpBBTreeVelocityFunc func)
-	{
-		cpBBTreeSetVelocityFunc(index,func);
-	}
-
-	BBTree(cpSpatialIndexBBFunc bbfunc,cpSpatialIndex *staticIndex)
-	 : SpatialIndex(cpBBTreeNew(bbfunc,staticIndex))
-	{
-			}
+	cpBBTree* get();
+	BBTree(cpSpatialIndexBBFunc bbfunc,cp::SpatialIndex *staticIndex);
+	void optimize();
+	void setVelocityFunc(cpBBTreeVelocityFunc func);
 
 };
-}//namespace cp
+};//namespace cp

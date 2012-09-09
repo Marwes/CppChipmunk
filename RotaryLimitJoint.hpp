@@ -1,56 +1,23 @@
 #pragma once
 
 #include "chipmunk.h"
+#include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class RotaryLimitJoint : public Constraint{
+class RotaryLimitJoint : public Constraint {
 protected:
-	cpRotaryLimitJoint*rotarylimitjoint;
+	cpRotaryLimitJoint* rotarylimitjoint;
 public:
-
-	cpRotaryLimitJoint* get() const
-	{
-		return rotarylimitjoint;
-	}
-
-	operator cpRotaryLimitJoint*() const
-	{
-		return rotarylimitjoint;
-	}
-
-	inline const cpConstraintClass *getClass()
-	{
-		return cpRotaryLimitJointGetClass();
-	}
-
-	inline cpFloat getMin(void)
-	{
-		return cpRotaryLimitJointGetMin(constraint);
-	}
-
-	inline void setMin(cpFloat value)
-	{
-		cpRotaryLimitJointSetMin(constraint,value);
-	}
-
-	inline cpFloat getMax(void)
-	{
-		return cpRotaryLimitJointGetMax(constraint);
-	}
-
-	inline void setMax(cpFloat value)
-	{
-		cpRotaryLimitJointSetMax(constraint,value);
-	}
-
-	RotaryLimitJoint(cpBody *a,cpBody *b,cpFloat min,cpFloat max)
-	 : Constraint(cpRotaryLimitJointNew(a,b,min,max))
-	{
-		constraint->data = this;
-	}
+	cpRotaryLimitJoint* get();
+	const cpConstraintClass *getClass();
+	RotaryLimitJoint(cp::Body *a,cp::Body *b,cpFloat min,cpFloat max);
+	cpFloat getMin(void);
+	void setMin(cpFloat value);
+	cpFloat getMax(void);
+	void setMax(cpFloat value);
 
 };
-}//namespace cp
+};//namespace cp

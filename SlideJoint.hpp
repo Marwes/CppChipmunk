@@ -1,77 +1,28 @@
 #pragma once
 
 #include "chipmunk.h"
-#include "Vect.hpp"
+#include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
+#include "Vect.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class SlideJoint : public Constraint{
+class SlideJoint : public Constraint {
 protected:
-	cpSlideJoint*slidejoint;
+	cpSlideJoint* slidejoint;
 public:
-
-	cpSlideJoint* get() const
-	{
-		return slidejoint;
-	}
-
-	operator cpSlideJoint*() const
-	{
-		return slidejoint;
-	}
-
-	inline const cpConstraintClass *getClass()
-	{
-		return cpSlideJointGetClass();
-	}
-
-	inline cp::Vect getAnchr1(void)
-	{
-		return cpSlideJointGetAnchr1(constraint);
-	}
-
-	inline void setAnchr1(cp::Vect& value)
-	{
-		cpSlideJointSetAnchr1(constraint,value);
-	}
-
-	inline cp::Vect getAnchr2(void)
-	{
-		return cpSlideJointGetAnchr2(constraint);
-	}
-
-	inline void setAnchr2(cp::Vect& value)
-	{
-		cpSlideJointSetAnchr2(constraint,value);
-	}
-
-	inline cpFloat getMin(void)
-	{
-		return cpSlideJointGetMin(constraint);
-	}
-
-	inline void setMin(cpFloat value)
-	{
-		cpSlideJointSetMin(constraint,value);
-	}
-
-	inline cpFloat getMax(void)
-	{
-		return cpSlideJointGetMax(constraint);
-	}
-
-	inline void setMax(cpFloat value)
-	{
-		cpSlideJointSetMax(constraint,value);
-	}
-
-	SlideJoint(cpBody *a,cpBody *b,cpVect anchr1,cpVect anchr2,cpFloat min,cpFloat max)
-	 : Constraint(cpSlideJointNew(a,b,anchr1,anchr2,min,max))
-	{
-		constraint->data = this;
-	}
+	cpSlideJoint* get();
+	const cpConstraintClass *getClass();
+	SlideJoint(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2,cpFloat min,cpFloat max);
+	cp::Vect getAnchr1(void);
+	void setAnchr1(cp::Vect value);
+	cp::Vect getAnchr2(void);
+	void setAnchr2(cp::Vect value);
+	cpFloat getMin(void);
+	void setMin(cpFloat value);
+	cpFloat getMax(void);
+	void setMax(cpFloat value);
 
 };
-}//namespace cp
+};//namespace cp

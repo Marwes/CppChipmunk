@@ -7,7 +7,6 @@ local namespace = "cp"
 
 
 
-
 local io = require "io"
 local lfs = require "lfs"
 local table = require "table"
@@ -22,15 +21,20 @@ local functionTypedefs = {}
 --Hooks that are called for every function found, if they return nil then the default functions are run
 --Otherwise they should return the text for the function and the name of the struct that the method should be added to
 local functionHooks = {
+	function ( returnType, functionName, argTable  )
+		if functionName == "cpBodySanityCheck" then
+			return ""
+		end
+	end
+	,
 	function ( returnType, functionName, argTable )
-		if nil and (functionName == "cpArbiterGetShapes" or functionName == "cpArbiterGetBodies") then
+		if (functionName == "cpArbiterGetShapes" or functionName == "cpArbiterGetBodies") then
 			local methodName, struct = getMethod(functionName)
 			local argType = toRawStruct(argTable[2].type)
-			local paramString = makeRawParameters(argTable)
-			paramString = paramString:gsub("&%s*&", "*&")
 
 			for _,v in ipairs(argTable) do
 				if _ ~= 1 then
+					v.type = toClass(v.type):gsub("%*%*", "*")
 					v.name = "&"..v.name
 				end
 			end
@@ -39,22 +43,18 @@ local functionHooks = {
 			body = body.."\t\ta = static_cast<"..toClass(argType).."*>(a_->data);\n"
 			body = body.."\t\tb = static_cast<"..toClass(argType).."*>(b_->data);\n"
 
-			local out = "\tinline void "..methodName.."("..paramString..")\n"
-			out = out..makeFunctionBody(body)
-			return out, struct
+			table.remove(argTable, 1)
+			return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
 		end
 	end
 	,
 	function ( returnType, functionName, argTable )
 		if functionName:find("Free") then
 			local methodName, struct = getMethod(functionName)
-			out = "\t~"..struct:sub(3).."("
-			returnIfNotVoid = ""
+			methodName = "~"..struct:sub(3)
+			returnType = ""
 			local argString = makeRawArguments(argTable, struct, true)
 			table.remove(argTable, 1)
-
-			out = out..makeRawParameters(argTable, struct)--Raw
-			out = out.. ")\n"
 
 			local body = functionName.."("..argString..");\n"
 			if struct:gsub("%s", "") == "cpSpace" then
@@ -62,14 +62,13 @@ local functionHooks = {
 				body = body.."\t\tdelete body;\n"
 			end
 
-			out = out..makeFunctionBody(body )
-			return out, struct
+			return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
 		end
 	end
 	,
 	function (returnType, functionName, argTable)
 		local methodName, struct
-		local out =""
+		
 		if functionName:find("New") then
 			methodName, struct = getMethod(functionName)
 			out = "\t"..struct:sub(3).."("
@@ -81,38 +80,63 @@ local functionHooks = {
 		else
 			return
 		end
+		methodName=classes[struct].name
 
-		out = out..makeRawParameters(argTable, struct)--Raw
+		toCppTypes(argTable)
+		local args = copyTable(argTable)
+		addGetCall(args, struct)
+		firstArg(args, struct)
 
-		out = out.. ")\n"
-		if classes[struct].parent then
-			out = out.."\t : "..classes[struct].parent.name.."(".. functionName.."("..makeRawArguments(argTable, struct).."))\n"
+		local initializerList = { }
+		if type(classes[struct].parent) == "table" then
+			table.insert(initializerList, {
+				lvalue=classes[struct].parent.name,
+				rvalue=functionName.."("..makeRawArguments(args, struct)..")"
+			})
+		elseif type(classes[struct].parent) == "string" then
+			table.insert(initializerList, {
+				lvalue=classes[struct].parent,
+				rvalue=functionName.."("..makeRawArguments(args, struct)..")"
+			})
 		else
-			out= out.."\t : "..classes[struct].member.."("..functionName.."("..makeRawArguments(argTable, struct).."))\n"
+			table.insert(initializerList, {
+				lvalue=classes[struct].member,
+				rvalue=functionName.."("..makeRawArguments(args, struct)..")"
+			})
 		end
-
+		local body = ""
 		if classes[struct].hasDataPointer then
-			local body = classes[struct].member.."->data = this;\n"
+			table.insert(initializerList,{
+				lvalue="data",
+				rvalue="0"
+			})
+
+			body = classes[struct].member.."->data = this;\n"
 
 			if struct == "cpSpace" then
-				out = out.."\t, body(new cp::Body(cpSpaceGetStaticBody("..classes[struct].member..")))\n"
+				table.insert(initializerList,{
+					lvalue="body",
+					rvalue="new cp::Body(cpSpaceGetStaticBody("..classes[struct].member.."))"
+				})
 				body = body.."\t\tcpBodySetUserData(cpSpaceGetStaticBody("..classes[struct].member.."), body);\n"
 			end
-			out = out..makeFunctionBody(body)
 		elseif (classes[struct].parent and classes[struct].parent.hasDataPointer) then
-			local body = classes[struct].parent.member.."->data = this;\n"
-			out = out..makeFunctionBody(body)
-		else
-			out = out..makeFunctionBody("")
+			body = classes[struct].parent.member.."->data = this;\n"
 		end
 
 		classes[struct].constructors = classes[struct].constructors..out
-		return "", struct
+		return Method:new({ 
+			returnType="", name=methodName, 
+			body=body, parameters=argTable,
+			initializerList=initializerList
+			}), 
+		struct
 	end
 	,
 	function (returnType, functionName, argTable )
 		for _,v1 in ipairs(argTable) do
 			if v1["type"]:find("Func") and functionTypedefs[v1["type"]:gsub("%s*", "")] then
+				if argTable[1].name == "dynamicIndex" then argTable[1].name = "index" end
 				local originalArgTable = copyTable(argTable)
 
 				local makeFunction = false
@@ -131,12 +155,14 @@ local functionHooks = {
 
 				local functionParams = makeRawParameters(functionArgs)
 				local functionArgs = copyTable(functionArgs)
+				local anonymousBody = ""
 
 				for k,v in ipairs(functionArgs) do
 					if v.name ~= "data" then 
 						local structName = toRawStruct(v.type)
 						if v["type"]:find("Arbiter") then 
-							v["name"] = "&"..namespace.."::Arbiter("..v.name..")"
+							anonymousBody = anonymousBody..namespace.."::Arbiter tempArbiter("..v.name..");\n"
+							v["name"] = "&tempArbiter"
 						elseif classes[toRawStruct(v.type)] and classes[toRawStruct(v.type)].hasDataPointer then
 							v["name"] = "("..namespace.."::"..v["type"]:sub(3)..")"..v.name.."->data"
 						end
@@ -149,7 +175,7 @@ local functionHooks = {
 				local functionTypedef = v1.type:sub(3)
 				v1.type = functionTypedef
 
-				classes[struct].additionalText = classes[struct].additionalText.."typedef "..stdFunc..functionTypedef..";\n"
+				classes[struct].additionalText = classes[struct].additionalText.."\ttypedef "..stdFunc..functionTypedef..";\n"
 
 				local returnIfNotVoid = returnType:find("void%s*%**") and "" or "return "
 				local stdFuncReturnIfNotVoid = functionReturnType:find("void%s*%**") and "" or "return "
@@ -159,14 +185,11 @@ local functionHooks = {
 				
 				classes[struct].anonymousDeclarations = classes[struct].anonymousDeclarations..anon..";\n"
 				
-				anon = anon.."\n"
-				anon = anon.."\t{\n"
-				anon = anon.."\t\t"..stdFuncReturnIfNotVoid.."(*reinterpret_cast<"..stdFunc.."*>(data))("..makeRawArguments(functionArgs)..");\n"
-				anon = anon.."\t}\n\n"
-				classes[struct].anonymousDefinitions = classes[struct].anonymousDefinitions..anon
+				anonymousBody = anonymousBody.."\t\t"..stdFuncReturnIfNotVoid.."(*reinterpret_cast<"..stdFunc.."*>(data))("..makeRawArguments(functionArgs)..");\n"
+
+				classes[struct].anonymousDefinitions = classes[struct].anonymousDefinitions..anon.."\n"..makeFunctionBody(anonymousBody)
 
 				
-				local out = "\tinline "..returnType..methodName.."("
 
 				local funcArgTable = nil
 				local dataArgTable = nil
@@ -189,38 +212,20 @@ local functionHooks = {
 				table.remove(argTable, 1)
 				table.remove(argTable, #argTable)
 				funcArgTable.name ="func"
-				
-				out = out..makeRawParameters(argTable)
-				out = out.. ")\n"
-				out = out.."\t{\n"
-				out = out.. "\t\t"..returnIfNotVoid..functionName.."("
-				out = out..argString
-				out = out..");\n"
-				out = out.. "\t};\n\n"
 
-				out = out..makeCppMethod(returnType, functionName, originalArgTable)
-				return out, struct
+				local body = returnIfNotVoid..functionName.."("..argString..");\n"
+				
+				--Add a method that does not use std::function as well
+				local t = makeCppMethod(returnType, functionName, originalArgTable)
+				classes[struct]:addMethod( t)
+
+				return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
 			end
 		end
 	end
 	,--cpVect handler since they have different names ie 'cpv...' instead of 'cpVect'
 	function (returnType, functionName, argTable )
 		if functionName:find("^cpv") then
-			if not classes["cpVect"] then
-
-				local includeText = "#pragma once\n\n"
-				includeText = includeText.."#include \"chipmunk.h\"\n"
-				local classText = ""
-				classText = classText.."class Vect : public cpVect{\n"
-				classText = classText.."public:\n\n"
-
-				classes["cpVect"] = {name="Vect", text=classText,
-									member="", hasMethods=true,
-									includeText=includeText, includes={},
-									additionalText="", anonymousDefinitions="",
-									anonymousDeclarations=""
-								}
-			end
 			local methodName, struct = functionName:gsub("cpv", ""), "cpVect"
 			local operatorMap = {
 				add={op="+", args="Vect& other"},
@@ -229,68 +234,96 @@ local functionHooks = {
 				neg={op="-", args="void"},
 				eql={op="==", args="Vect& other"}
 			}
-			local out = ""
+
 
 			local returnIfNotVoid = returnType:find("void%s*%**") and "" or "return "
 			if classes[toRawStruct(returnType)] then
 				returnType = toClass(returnType)
 			end
 
-			local paramTable = copyTable(argTable)
-			if argTable[1].type:find("cpVect") then
-				argTable[1].name = "*this"
+			local args = copyTable(argTable)
+			if args[1].type:find("cpVect") then
+				args[1].name = "*this"
 			end
 
-			if paramTable[1].type:find("cpVect") then
-				table.remove(paramTable, 1)
+			if argTable[1].type:find("cpVect") then
+				table.remove(argTable, 1)
 			end
-			for _, a in ipairs(paramTable) do 
+			for _, a in ipairs(argTable) do 
 				if a.type:find("cpVect") then
 					a.type = "Vect& "
 				end
 			end
-			local paramString = makeRawParameters(paramTable, struct)
 
-			local argString = makeRawArguments(argTable, struct, true)
+			local argString = makeRawArguments(args, struct, true)
+			local body = ""
 
 			if operatorMap[methodName] then
 				local op = operatorMap[methodName].op
-				out = "\tinline "..returnType.."operator"..op.."("
-
-				out = out..paramString --Raw
-				out = out..")\n"
-				out = out..makeFunctionBody(returnIfNotVoid..functionName.."("..argString..");\n")
-
+				body = returnIfNotVoid..functionName.."("..argString..");\n"
 			elseif methodName ~= "" then
-				out = "\tinline "..returnType..methodName.."("
-				out = out..paramString
-				out = out..")\n"
-				out = out..makeFunctionBody(returnIfNotVoid..functionName.."("..argString..");\n")
+				body = returnIfNotVoid..functionName.."("..argString..");\n"
 			else --Methodname is "" meaning it is the constructor 'cpv'
 				
-				local constructor = "\tVect(cpFloat x=0, cpFloat y=0)\n"
-				constructor = constructor.."\t{ this->x = x; this->y = y; }\n\n"
+				methodName = "Vect"
+				returnType = ""
+				argTable[1].default = 0
+				argTable[2].default = 0
+				body = "this->x = x; this->y = y;\n"
 
-				constructor = constructor.."\tVect(cpVect cv)\n"
-				constructor = constructor.."\t{ this->x = cv.x; this->y = cv.y; }\n\n"
 
-				classes[struct].constructors = classes[struct].constructors or ""
-				classes[struct].constructors = classes[struct].constructors..constructor
+				classes[struct]:addMethod(Method:new({ 
+					returnType="", 
+					name="Vect", 
+					body="this->x = cv.x; this->y = cv.y;\n", 
+					parameters={{type="cpVect ", name="cv"}}
+					}))
 			end
-			return out, struct
+
+			return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
 		end
 	end
 	,
 	function (returnType, functionName, argTable )
 		if functionName:find("DataPointer") then
-			local memberName = getMethod(functionName)
-			return out, struct
+			local methodName, struct = getMethod(functionName)
+			local body = "return data;\n"
+			return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
 		end
 	end
 }
 
 
 preWritehooks = {
+	function ( ... )
+
+		for structName,class in pairs(classes) do
+			if not class.parent then
+				local pointer = (structName=="cpVect" or structName == "cpBB") and " " or "*"
+				local body = class.members[1].name.." = v;\n"
+				local initializerList = nil
+
+				if class.hasDataPointer then
+					body = body.."\t\tdata = v->data;\n"
+					body = body.."\t\tv->data = this;\n"
+					initializerList = {{
+						lvalue="data",
+						rvalue="0"
+					}}
+				end
+
+
+				class:addMethod(Method:new({
+				name=class.name,
+				body=body,
+				returnType="",
+				parameters= {{type=structName..pointer.." ", name="v"}},
+				initializerList=initializerList
+				})
+				)	
+			end
+		end
+	end
 }
 
 --Fills the table classes with information from all the structs encountered
@@ -372,56 +405,35 @@ function writeIncludeAll()
 	writeFile(outFolder.."chipmunk.hpp", includeAllText)
 end
 
+
+
 --Writes all the class files using the global table 'classes'
 function writeClasses( )
-	for k,v in pairs(classes) do
-		for structName,_ in pairs(classes) do
-			local class = toClass(structName)
-			if k ~= structName and classes[structName] and classes[structName].hasMethods 
-				and (v.text:find(class) or v.constructors:find(class) or v.anonymousDefinitions:find(class)) then
-
-				v.includes[class:gsub("^.*::", "")] = true
-			end
-		end
-
-
-		for includeClass, includeText in pairs(v.includes) do
-			if type(includeText) == "string" then 
-				v.includeText = v.includeText..includeText
-			else
-				v.includeText = v.includeText.."#include \""..includeClass..".hpp\"\n"
-			end
-		end
-
-		if v.hasMethods then
+	for struct,class in pairs(classes) do
+		if class.hasMethods then
 			if k == "cpSpatialIndex" then
-				v.text = v.text:gsub("dynamicIndex", "index->dynamicIndex")--TODO
+				class.text = class.text:gsub("dynamicIndex", "index->dynamicIndex")--TODO
 			end
-			local className = k:sub(3)
+			if type(class.parent) == "table" then
+				table.insert(class.includes, "#include \""..class.parent.name..".hpp\"\n")
+			end
+			local className = struct:sub(3)
 			local outName = className..".hpp"
-			if v.parent then
-				v.includeText = v.includeText..'#include "'..v.parent.name..'.hpp"\n'
-				v.text = v.text:gsub("class "..className, "class "..className.." : public "..v.parent.name)
-			end
 
-			local out = v.includeText.."\n"
+			writeFile(outFolder..outName, "#pragma once\n\n"..class:make())
 
-			if v.anonymousDeclarations and v.anonymousDeclarations ~= "" then 
-				out = out.."class "..v.name..";\n".."namespace {\n"..v.anonymousDeclarations.."}\n\n"
-			end
+			local cppFileText = "#include \""..outName.."\"\n"
+			cppFileText = cppFileText..class:makeIncludes()
 
-			out = out.. "namespace "..namespace.." {\n\n"
-			if v.additionalText then
-				out = out..v.additionalText.."\n"
-			end
-			out = out.. v.text..v.constructors
-			out = out.. "};\n"
-			out = out.. "}//namespace "..namespace.."\n"
+			cppFileText = cppFileText..class:makeAnonymousDeclarations()
 
-			if v.anonymousDefinitions and v.anonymousDefinitions  ~= "" then 
-				out = out.."\nnamespace {\n"..v.anonymousDefinitions.."}"
-			end
-			writeFile(outFolder..outName, out)
+			cppFileText = cppFileText.."namespace "..namespace.." {\n\n"
+			cppFileText = cppFileText..class:makeMethodDefinitions()
+			cppFileText = cppFileText.."};//namespace "..namespace.."\n"
+
+			cppFileText = cppFileText..class:makeAnonymousDefinitions()
+
+			writeFile(outFolder..outName:gsub("hpp$", "cpp"), cppFileText)
 		end
 	end
 end
@@ -429,9 +441,12 @@ end
 --Compares the text with what is already there to determine if we need to update it
 --TODO : Should maybe compare timestamps instead
 function writeFile( filename, text )
-	local f = assert(io.open(filename))
-	local previousText = f:read("*all")
-	f:close()
+	local f = io.open(filename)
+	local previousText = nil
+	if f then
+		previousText = f:read("*all")
+		f:close()
+	end
 	if previousText ~= text then
 		local f = assert(io.open(filename, "w"))
 		f:write(text)
@@ -485,6 +500,7 @@ local typedefPattern = "typedef" * space^1 * lpeg.C(allowed^1 * space^0 * lpeg.P
 	* space^0 * "*" * space^0 * lpeg.C(allowed^1) * space^0 * ")" * space^0 * "("
 	* makeArgumentPattern() * ")" * space^0 * ";"
 
+local commentPattern = lpeg.C("///" * -lpeg.P("\n///"))
 
 --Calls the callback with all the values that are returned from the pattern matching
 function matchAll( pattern, text, callback )
@@ -518,6 +534,175 @@ function copyTable( tab )
 		end
 	end
 	return c
+end
+
+Method = {}
+Method.__index = Method
+--{ returnType=returnType, name=methodName, body=body, parameters=argTable}
+function Method:new( tab )
+	assert(type(tab.returnType) == "string", "returnType must be a string")
+	assert(type(tab.name) == "string", "name must be a string")
+	assert(type(tab.body) == "string", "body must be a string")
+	assert(type(tab.parameters) == "table", "parameters must be a string")
+
+	setmetatable(tab, self)
+	return tab
+end
+
+function Method:makeDeclaration()
+	local out = "\t"..self.returnType..self.name.."(".. makeRawParameters(self.parameters)..")"
+	if self.inline then
+		out = out..self:makeMethodBody()
+	else
+		out = out..";\n"
+	end
+	return out
+end
+
+function Method:makeDefinition( )
+	if self.inline then return "" end
+
+	local out = self.returnType..self.class.name.."::"..self.name.."("..makeRawParameters(self.parameters)..")\n"
+	if self.initializerList and #self.initializerList > 0 then
+		for _,v in ipairs(self.initializerList) do
+			if _ == 1 then
+				out = out.."\t: "..v.lvalue.."("..v.rvalue.."),\n"
+			else
+				out = out.."\t  "..v.lvalue.."("..v.rvalue.."),\n"
+			end
+		end
+		if out:sub(#out-1) == ",\n" then
+			out = out:sub(1, #out-2).."\n"
+		end
+	end
+	out = out..self:makeMethodBody()
+	return out
+end
+
+function Method:makeMethodBody()
+	return "{\n\t\t"..self.body.."}\n"
+end
+
+function Method:makeMethod()
+	return self:makeDeclaration().."\n"..self:makeMethodBody()
+end
+
+function makeFunctionBody(body)
+	return "\t{\n\t\t"..body.."\t}\n\n"
+end
+
+
+
+Class = {}
+Class.__index = Class
+function Class:new(tab)
+	local structName = tab.structName
+
+
+	tab.name =  tab.name or ""
+	tab.text =  tab.text or ""
+	tab.member =  tab.member or ""
+	tab.members =  tab.members or {}
+	tab.hasMethods =  tab.hasMethods
+	tab.includes =  tab.includes or {}
+	tab.additionalText =  tab.additionalText or ""
+	tab.anonymousDeclarations =  tab.anonymousDeclarations or ""
+	tab.anonymousDefinitions =  tab.anonymousDefinitions or ""
+	tab.hasDataPointer =  tab.hasDataPointer
+	tab.constructors =  tab.constructors or ""
+	tab.parent =  tab.parent
+
+
+
+	tab.methods = tab.methods or {}
+	for k,v in pairs(tab.methods) do
+		v.class = tab
+	end
+	setmetatable(tab, self)
+	return tab
+end
+
+function Class:addMethod(method)
+	self.methods.n = self.methods.n or 0
+	self.methods.n = self.methods.n + 1
+	table.insert(self.methods, method)
+	method.class = self
+end
+
+function Class:make( )
+	local body = self:makeClassBody()
+	self:addIncludesFrom(body)
+	self:addIncludesFrom(self.anonymousDefinitions)
+	local out = self:makeIncludes()
+	out = out.."namespace "..namespace.." {\n"
+	out = out..self.additionalText.."\n"
+	out = out..body
+
+	out = out.."};//namespace "..namespace.."\n"
+	return out
+end
+
+function Class:makeMethodDefinitions( )
+	local out = ""
+	for _,method in ipairs(self.methods) do
+		out = out..method:makeDefinition()
+	end
+	return out
+end
+
+function Class:makeClassBody( )
+	local out = "class "..self.name
+	if type(self.parent) == "string" then 
+		out = out.." : public "..self.parent
+	elseif self.parent then
+		out = out.." : public "..self.parent.name
+	end
+	out = out.." {\n"
+	out = out.."protected:\n"
+	if self.members then
+		for _,member in ipairs(self.members) do
+			out = out.."\t"..member.type.." "..member.name..";\n"
+		end
+	end
+	out = out.."public:\n"
+
+	for _, method in ipairs(self.methods) do
+		out = out..method:makeDeclaration()
+	end
+
+	out = out.."\n"
+	out = out.."};\n"
+	return out
+end
+
+function Class:makeAnonymousDeclarations()
+	if not self.anonymousDeclarations or self.anonymousDeclarations == ""  then return "" end
+	return "class "..self.name..";\n".."namespace {\n"..self.anonymousDeclarations.."}\n\n"
+end
+
+function Class:makeAnonymousDefinitions()
+	if not self.anonymousDefinitions or self.anonymousDefinitions == ""  then return "" end
+	return "namespace {\n"..self.anonymousDefinitions.."}\n\n"
+end
+
+function Class:addIncludesFrom( text )
+	for k,v in pairs(classes) do 
+		if text:find(namespace.."::"..v.name) then
+			self.includes[v.name] = "#include \""..v.name..".hpp\"\n"
+		end
+	end
+end
+
+function Class:makeIncludes()
+	local out = ""
+	for includeClass, includeText in pairs(self.includes) do
+		if type(includeText) == "string" then 
+			out = out..includeText
+		else
+			out = out.."#include \""..includeClass..".hpp\"\n"
+		end
+	end
+	return out.."\n"
 end
 
 --Returns the method and struct if they could be deduced from the functions name
@@ -626,13 +811,22 @@ end
 function makeArguments(tab, struct, firstArgIsThis)
 	local out = ""
 	for k,v in ipairs(tab) do
-		if classes[toRawStruct(v.type)] and classes[toRawStruct(v.type)].hasMethods then 
-			if v.name == "" then
+		local rawStruct = toRawStruct(v.type)
+		if classes[rawStruct] and classes[rawStruct].hasMethods then 
+			if v.name == classes[rawStruct].member then
+				if type(classes[rawStruct].parent) == "table" then
+					out = out..classes[rawStruct].parent.name.."::get(),"
+				else
+					out = out.."get(),"
+				end
+			elseif v.name == "" then
 				out = out.."get(),"
+			elseif v.type:find(toClass("cpBB")) or v.type:find(toClass("cpVect")) then
+				out = out..v.name..","
 			else
-				out = out..v.name..".get(),"
+				out = out..v.name.." ? "..v.name.."->get() : 0,"
 			end
-		elseif v.name then
+		else
 			if v.name == "" then
 				out = out.."get(),"
 			else
@@ -646,24 +840,50 @@ function makeArguments(tab, struct, firstArgIsThis)
 	return out
 end
 
-function makeDeclaration(returnType, methodName, argTable )
-	local out = "\t"..returnType..methodName.."(".. makeRawParameters(argTable)..")"
-	return out
+
+
+
+function toCppTypes( tab )
+	for _,v in ipairs(tab) do
+		if classes[toRawStruct(v.type)] and classes[toRawStruct(v.type)].hasMethods then
+			v.type = toClass(v.type) --:gsub("%s*%*%s*", "& ")
+		end
+	end
 end
 
-function makeFunctionBody( body)
-	local out = "\t{\n\t\t"..body.."\t}\n\n"
-	return out
+function addGetCall( tab,struct )
+	for k,v in ipairs(tab) do
+		local rawStruct = toRawStruct(v.type)
+		if classes[rawStruct] and classes[rawStruct].hasMethods then
+			if classes[struct] and type(classes[struct].parent) == "table" and v.type:find(classes[struct].parent.structName) then
+				v.name = classes[struct].parent.name.."::get()"
+			elseif v.name == classes[struct].member then
+				v.name = "get()"
+			elseif v.type:find("cpBB") or v.type:find("cpVect") or v.type:find("cp::BB") or v.type:find("cp::Vect")then
+				
+			else
+				v.name = v.name.." ? "..v.name.."->get() : 0"
+			end
+		elseif struct and (v.type:find(struct)or v.type:find(toClass(struct))) 
+			and (v.type:find("cpBB") or v.type:find("cpVect") or v.type:find("cp::BB") or v.type:find("cp::Vect")) and k == 1 then
+			v.name = "*this"
+		end
+	end
 end
 
-function makeMethod(returnType, methodName, argTable , body)
-	return makeDeclaration(returnType, methodName, argTable )..makeFunctionBody( body)
+function firstArg( argTable, struct)
+	if struct and argTable[1].type:find(struct) then
+		if classes[struct].member and classes[struct].member ~= "" then
+			argTable[1].name = classes[struct].member
+		else 
+			argTable[1].name = "*this"
+		end
+	end
 end
-
 
 --The standard function that creates a method for c++
 --This should be able to handle 90% of all chipmunk methods
-function makeCppMethod(returnType, functionName, tab )
+function makeCppMethod(returnType, functionName, argTable )
 
 	local returnIfNotVoid = returnType:find("void%s*%**") and "" or "return "
 	local methodName, struct = getMethod(functionName)
@@ -672,32 +892,37 @@ function makeCppMethod(returnType, functionName, tab )
 	if returnIfNotVoid ~= "" and classes[returnStruct] and classes[returnStruct].hasMethods and struct then 
 		returnType = toClass(returnType)
 	end
-	local out = "\tinline "..returnType..methodName.."("
 
+	local tab = copyTable(argTable)
 
 	if tab[1] and classes[struct] then
 		if tab[1].type:find( struct) then
 			tab[1].name = classes[struct].member
 		end
 	end
+
+	addGetCall(tab, struct)
+	firstArg(tab, struct)
 	local argString = makeRawArguments(tab, struct, true)
 	table.remove(tab, 1)
-	out = out..makeRawParameters(tab, struct)--Raw
+	table.remove(argTable, 1)
+	toCppTypes(argTable)
 
-	out = out.. ")\n"
+	
 	local body = functionName.."("..argString..")"
 
 	if returnIfNotVoid ~= "" and classes[returnStruct] and struct 
 		and classes[struct].hasDataPointer and returnType:find("%*") then
 		body = returnType:gsub("^.*::", "cp").." temp = "..body..";\n"
-		body = body.."\t\treturn static_cast<"..returnType..">(temp ? temp->data : 0)"
+		body = body.."\t\treturn static_cast<"..returnType..">(temp ? temp->data : 0);\n"
 	else
-		body = returnIfNotVoid..body
+		body = returnIfNotVoid..body..";\n"
 	end
-	out = out..makeFunctionBody(body..";\n")
 
-	return out, struct
+	return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
 end
+
+
 
 
 --Takes some text and fills the table 'classes' with all the structs it finds
@@ -711,8 +936,10 @@ function buildTypes( text )
 		elseif chipmunkMember == "spacehash" then chipmunkMember = "hash"
 		end
 
-		local includeText = "#pragma once\n\n"
-		includeText = includeText.."#include \"chipmunk.h\"\n"
+		local includes = {
+			"#include \"chipmunk.h\"\n",
+			"#include \"chipmunk_declarations.hpp\"\n" 
+		}
 
 		--Hacked in to let Vect and BB not be pointers
 		local pointer = (structName=="cpVect" or structName == "cpBB") and " " or "*"
@@ -725,61 +952,48 @@ function buildTypes( text )
 			hasDataPointer = true
 		end
 		local className = structName:sub(3)
-		local classText = ""
-		classText = classText.."class "..className.."{\n"
 
-		classText = classText.."protected:\n"
-		classText = classText.."\t"..structName..pointer..chipmunkMember..";\n"
-
-	
+		local members = {
+			{name=chipmunkMember, type=structName..pointer}
+		}
 		if hasDataPointer then
-			classText = classText.."private:\n"
-			classText = classText.."\tcpDataPointer data;\n"
+			table.insert(members, {name="data", type="cpDataPointer"})
 		end
 		if structName == "cpSpace" then --We add a cp::Body* as well for the static body
-			classText = classText.."\t"..namespace.."::Body* body;\n"
+			table.insert(members, {name="body", type=namespace.."::Body*"})
 		end
 		if structName == "cpBody" then
-			classText = classText.."\tfriend class "..namespace.."::Space;\n"
+			table.insert(members, {name=namespace.."::Space;\n", type="friend class "})
 		end
-
-		classText = classText.."public:\n\n"
 
 		local hasMethods = text:find("%w+%s*"..structName.."[_%w]+%s*%(")
 		--Construct from a pointer to a cpStruct
 		
-		local body = chipmunkMember.." = v;\n"
-		if hasDataPointer then
-			body = body.."\t\tdata = v->data;\n"
-			body = body.."\t\tv->data = this;\n"
-		end
 
-		local constructors = "\t"..className.."("..structName..pointer.." v)\n"
-		constructors = constructors..makeFunctionBody(body)
 
-		classText = classText.."\t"..structName..pointer.." get() const\n"
-		classText = classText..makeFunctionBody("return "..chipmunkMember..";\n")
 
-		classText = classText.."\toperator "..structName..pointer.."() const\n"
-		classText = classText.."\t{\n"
-		classText = classText.."\t\treturn "..chipmunkMember..";\n"
-		classText = classText.."\t}\n\n"
 
-		function setIfNotNil( structName, field, val)
-			classes[structName][field] = classes[structName][field] or val
-		end
-		classes[structName] = classes[structName] or {}
-		setIfNotNil(structName, "name", className)
-		setIfNotNil(structName, "text", classText)
-		setIfNotNil(structName, "member", chipmunkMember)
-		setIfNotNil(structName, "hasMethods", hasMethods)
-		setIfNotNil(structName, "includeText", includeText)
-		setIfNotNil(structName, "includes", {})
-		setIfNotNil(structName, "additionalText", "")
-		setIfNotNil(structName, "anonymousDeclarations", "")
-		setIfNotNil(structName, "anonymousDefinitions", "")
-		setIfNotNil(structName, "hasDataPointer", hasDataPointer)
-		setIfNotNil(structName, "constructors", constructors)
+		local methods ={
+		Method:new({		
+				name="get",
+				body="return "..chipmunkMember..";\n",
+				returnType=structName..pointer.." ",
+				parameters= {type="void", name=""}
+			})
+		}
+
+		local c = Class:new({
+			structName=structName, 
+			name=className, 
+			member=chipmunkMember, 
+			members=members, 
+			includes=includes,
+			hasMethods=hasMethods, 
+			hasDataPointer=hasDataPointer, 
+			constructors=constructors,
+			methods=methods 
+			})
+		classes[structName] = c
 		return e
 	end)
 
@@ -791,6 +1005,38 @@ function buildTypes( text )
 			}
 			return e
 		end)
+
+	if not classes["cpVect"] then
+		local includes = {
+			"#include \"chipmunk.h\"\n"
+		}
+		classes["cpVect"] = Class:new(
+			{structName="cpVect", name="Vect", text=classText,
+			member="", hasMethods=true,
+			includes=includes,
+			additionalText="", anonymousDefinitions="",
+			anonymousDeclarations="",
+			parent="cpVect"
+		})
+	end
+
+	if classes.cpBB and not classes.cpBB.parent then
+		classes.cpBB.parent = "cpBB"
+		classes.cpBB.member = ""
+		classes.cpBB.members = nil
+		classes.cpBB:addMethod(	Method:new({		
+				name="BB",
+				body="l = v.l; t = v.t; r = v.r; b = v.b;\n",
+				returnType="",
+				parameters= {{type="const cpBB ", name="v"}}
+			}))
+		for k,v in ipairs(classes.cpBB.methods) do 
+			if v.name == "get" then
+				table.remove(classes.cpBB.methods, k)
+				break
+			end
+		end
+	end
 
 	if classes["cpPolyShape"] then
 		classes["cpShape"] = classes["cpShape"] or {}
@@ -838,28 +1084,25 @@ function parseText(text )
 	matchAll(functionPattern, text,
 		function (b, returnType, functionName, tab, e)
 		if b then
-			if functionName:find("AddCollisionHandler") then
-				print(functionName)
-			end
 			local _, struct = getMethod(functionName)
 			if struct and classes[struct] then
 				classes[struct].hasMethods = true
 			end
-			--local out, struct = makeMethod(returnType, functionName, tab)
-			local out, struct = nil, nil
+
+			local method, struct = nil, nil
 			for _,hook in ipairs(functionHooks) do
-				out, struct = hook(returnType, functionName, tab)
-				if out then break end
+				method, struct = hook(returnType, functionName, tab)
+				if method then break end
 			end
 
-			if not out then
-				out, struct = makeCppMethod(returnType, functionName, tab)
+			if not method then
+				method, struct = makeCppMethod(returnType, functionName, tab)
 			end
 
 			--assert(struct == cppStruct)
-			if struct then
-				classes[struct].text = classes[struct].text..out
+			if struct and getmetatable(method) == Method then
 				classes[struct].hasMethods = true
+				classes[struct]:addMethod(method)
 			end
 		end
 		return e--return the new position
@@ -901,36 +1144,51 @@ function parseText(text )
 			local setter = true
 			if defineText:find("Setter") then getter = false
 			elseif defineText:find("Getter") then setter = false end
-			local out = ""
+
 			if getter then
 				local body = "return cp"..class.."Get"..name.."("..structMember..");\n"
 				local rawStruct = toRawStruct(structType)
 				local returnType = type
+
 				if classes[rawStruct] and classes[rawStruct].hasDataPointer then
 					returnType = toClass(rawStruct).."*"
 					local f = "cp"..class.."Get"..name.."("..structMember..")"
-					body = "return static_cast<"..returnType..">("..f.." ? "..f.."->data : 0);\n"
+					body = rawStruct.." *temp = "..f..";\n"
+					body = body.."\t\treturn static_cast<"..returnType..">(temp ? temp->data : 0);\n"
 				elseif rawStruct == "cpDataPointer" then
 					body = "return data;\n"
 				elseif returnType == "cpVect" or returnType == "cpBB" then
 					returnType = toClass(returnType)
 				end
 
-				out = out.."\tinline "..returnType.." get"..name.."(void)\n"
-				out = out..makeFunctionBody(body)
+				local m = Method:new({ 
+					returnType=returnType.." ", 
+					name="get"..name, 
+					body=body, 
+					parameters={
+						{name="", type="void"}
+					}
+				})
+				classes["cp"..class]:addMethod(m)
 			end
 			if setter then
 				local body = "cp"..class.."Set"..name.."("..structMember..",value);\n"
-				if toRawStruct(structType) == "cpDataPointer" then
-					body = "data = value;\n"
-				elseif type == "cpVect" or type =="cpBB" then
-					type = toClass(type).."&"
-				end
-				out = out.."\tinline void".." set"..name.."("..type.." value)\n"
-				out = out..makeFunctionBody(body)
-			end
 
-			classes["cp"..class].text = classes["cp"..class].text..out
+				if classes[toRawStruct(type)] then
+					type = toClass(type)
+				elseif toRawStruct(type) == "cpDataPointer" then
+					body = "data = value;\n"
+				end
+				local m = Method:new({ 
+					returnType="void ", 
+					name="set"..name, 
+					body=body, 
+					parameters={
+						{name="value", type=type.." "}
+					}
+				})
+				classes["cp"..class]:addMethod(m)
+			end
 			classes["cp"..class].hasMethods = true
 			return e
 		end)

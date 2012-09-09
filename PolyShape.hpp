@@ -1,53 +1,24 @@
 #pragma once
 
 #include "chipmunk.h"
+#include "chipmunk_declarations.hpp"
 #include "Shape.hpp"
+#include "Vect.hpp"
+#include "BB.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class PolyShape : public Shape{
+class PolyShape : public Shape {
 protected:
-	cpPolyShape*polyshape;
+	cpPolyShape* polyshape;
 public:
-
-	cpPolyShape* get() const
-	{
-		return polyshape;
-	}
-
-	operator cpPolyShape*() const
-	{
-		return polyshape;
-	}
-
-	inline int getNumVerts()
-	{
-		return cpPolyShapeGetNumVerts(shape);
-	}
-
-	inline cpVect getVert(int idx)
-	{
-		return cpPolyShapeGetVert(shape,idx);
-	}
-
-	PolyShape(cpBody *body,int numVerts,cpVect *verts,cpVect offset)
-	 : Shape(cpPolyShapeNew(body,numVerts,verts,offset))
-	{
-		shape->data = this;
-	}
-
-	PolyShape(cpBody *body,cpFloat width,cpFloat height)
-	 : Shape(cpBoxShapeNew(body,width,height))
-	{
-		shape->data = this;
-	}
-
-	PolyShape(cpBody *body,cpBB box)
-	 : Shape(cpBoxShapeNew2(body,box))
-	{
-		shape->data = this;
-	}
+	cpPolyShape* get();
+	PolyShape(cp::Body *body,int numVerts,cp::Vect *verts,cp::Vect offset);
+	PolyShape(cp::Body *body,cpFloat width,cpFloat height);
+	PolyShape(cp::Body *body,cp::BB box);
+	int getNumVerts();
+	cp::Vect getVert(int idx);
 
 };
-}//namespace cp
+};//namespace cp

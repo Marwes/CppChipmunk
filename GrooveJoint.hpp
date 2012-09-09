@@ -1,67 +1,26 @@
 #pragma once
 
 #include "chipmunk.h"
-#include "Vect.hpp"
+#include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
+#include "Vect.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class GrooveJoint : public Constraint{
+class GrooveJoint : public Constraint {
 protected:
-	cpGrooveJoint*groovejoint;
+	cpGrooveJoint* groovejoint;
 public:
-
-	cpGrooveJoint* get() const
-	{
-		return groovejoint;
-	}
-
-	operator cpGrooveJoint*() const
-	{
-		return groovejoint;
-	}
-
-	inline const cpConstraintClass *getClass()
-	{
-		return cpGrooveJointGetClass();
-	}
-
-	inline void setGrooveA(cpVect value)
-	{
-		cpGrooveJointSetGrooveA(constraint,value);
-	}
-
-	inline void setGrooveB(cpVect value)
-	{
-		cpGrooveJointSetGrooveB(constraint,value);
-	}
-
-	inline cp::Vect getGrooveA(void)
-	{
-		return cpGrooveJointGetGrooveA(constraint);
-	}
-
-	inline cp::Vect getGrooveB(void)
-	{
-		return cpGrooveJointGetGrooveB(constraint);
-	}
-
-	inline cp::Vect getAnchr2(void)
-	{
-		return cpGrooveJointGetAnchr2(constraint);
-	}
-
-	inline void setAnchr2(cp::Vect& value)
-	{
-		cpGrooveJointSetAnchr2(constraint,value);
-	}
-
-	GrooveJoint(cpBody *a,cpBody *b,cpVect groove_a,cpVect groove_b,cpVect anchr2)
-	 : Constraint(cpGrooveJointNew(a,b,groove_a,groove_b,anchr2))
-	{
-		constraint->data = this;
-	}
+	cpGrooveJoint* get();
+	const cpConstraintClass *getClass();
+	GrooveJoint(cp::Body *a,cp::Body *b,cp::Vect groove_a,cp::Vect groove_b,cp::Vect anchr2);
+	void setGrooveA(cp::Vect value);
+	void setGrooveB(cp::Vect value);
+	cp::Vect getGrooveA(void);
+	cp::Vect getGrooveB(void);
+	cp::Vect getAnchr2(void);
+	void setAnchr2(cp::Vect value);
 
 };
-}//namespace cp
+};//namespace cp

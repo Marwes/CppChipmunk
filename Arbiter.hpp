@@ -1,120 +1,37 @@
 #pragma once
 
 #include "chipmunk.h"
+#include "chipmunk_declarations.hpp"
 #include "Vect.hpp"
+#include "Shape.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class Arbiter{
+class Arbiter {
 protected:
-	cpArbiter*arb;
+	cpArbiter* arb;
 public:
-
-	cpArbiter* get() const
-	{
-		return arb;
-	}
-
-	operator cpArbiter*() const
-	{
-		return arb;
-	}
-
-	inline cpVect totalImpulse()
-	{
-		return cpArbiterTotalImpulse(arb);
-	}
-
-	inline cpVect totalImpulseWithFriction()
-	{
-		return cpArbiterTotalImpulseWithFriction(arb);
-	}
-
-	inline cpFloat totalKE()
-	{
-		return cpArbiterTotalKE(arb);
-	}
-
-	inline void ignore()
-	{
-		cpArbiterIgnore(arb);
-	}
-
-	inline void getShapes(cpShape **a,cpShape **b)
-	{
-		cpArbiterGetShapes(arb,a,b);
-	}
-
-	inline void getBodies(cpBody **a,cpBody **b)
-	{
-		cpArbiterGetBodies(arb,a,b);
-	}
-
-	inline cpContactPointSet getContactPointSet()
-	{
-		return cpArbiterGetContactPointSet(arb);
-	}
-
-	inline cpBool isFirstContact()
-	{
-		return cpArbiterIsFirstContact(arb);
-	}
-
-	inline int getCount()
-	{
-		return cpArbiterGetCount(arb);
-	}
-
-	inline cpVect getNormal(int i)
-	{
-		return cpArbiterGetNormal(arb,i);
-	}
-
-	inline cpVect getPoint(int i)
-	{
-		return cpArbiterGetPoint(arb,i);
-	}
-
-	inline cpFloat getDepth(int i)
-	{
-		return cpArbiterGetDepth(arb,i);
-	}
-
-	inline cpFloat getElasticity(void)
-	{
-		return cpArbiterGetElasticity(arb);
-	}
-
-	inline void setElasticity(cpFloat value)
-	{
-		cpArbiterSetElasticity(arb,value);
-	}
-
-	inline cpFloat getFriction(void)
-	{
-		return cpArbiterGetFriction(arb);
-	}
-
-	inline void setFriction(cpFloat value)
-	{
-		cpArbiterSetFriction(arb,value);
-	}
-
-	inline cp::Vect getSurfaceVelocity(void)
-	{
-		return cpArbiterGetSurfaceVelocity(arb);
-	}
-
-	inline void setSurfaceVelocity(cp::Vect& value)
-	{
-		cpArbiterSetSurfaceVelocity(arb,value);
-	}
-
-	Arbiter(cpArbiter* v)
-	{
-		arb = v;
-	}
+	cpArbiter* get();
+	cp::Vect totalImpulse();
+	cp::Vect totalImpulseWithFriction();
+	cpFloat totalKE();
+	void ignore();
+	void getShapes(cp::Shape *&a,cp::Shape *&b);
+	void getBodies(cp::Body *&a,cp::Body *&b);
+	cpContactPointSet getContactPointSet();
+	cpBool isFirstContact();
+	int getCount();
+	cp::Vect getNormal(int i);
+	cp::Vect getPoint(int i);
+	cpFloat getDepth(int i);
+	cpFloat getElasticity(void);
+	void setElasticity(cpFloat value);
+	cpFloat getFriction(void);
+	void setFriction(cpFloat value);
+	cp::Vect getSurfaceVelocity(void);
+	void setSurfaceVelocity(cp::Vect value);
+	Arbiter(cpArbiter* v);
 
 };
-}//namespace cp
+};//namespace cp

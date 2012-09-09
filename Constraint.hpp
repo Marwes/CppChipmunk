@@ -1,125 +1,37 @@
 #pragma once
 
 #include "chipmunk.h"
+#include "chipmunk_declarations.hpp"
 #include "Space.hpp"
 #include "Body.hpp"
 
 namespace cp {
 
-
-class Constraint{
+class Constraint {
 protected:
-	cpConstraint*constraint;
-private:
+	cpConstraint* constraint;
 	cpDataPointer data;
 public:
-
-	cpConstraint* get() const
-	{
-		return constraint;
-	}
-
-	operator cpConstraint*() const
-	{
-		return constraint;
-	}
-
-	~Constraint()
-	{
-		cpConstraintFree(constraint);
-	}
-
-	inline void activateBodies()
-	{
-		cpConstraintActivateBodies(constraint);
-	}
-
-	inline cpFloat getImpulse()
-	{
-		return cpConstraintGetImpulse(constraint);
-	}
-
-	inline cp::Space* getSpace(void)
-	{
-		return static_cast<cp::Space*>(cpConstraintGetSpace(constraint) ? cpConstraintGetSpace(constraint)->data : 0);
-	}
-
-	inline cp::Body* getA(void)
-	{
-		return static_cast<cp::Body*>(cpConstraintGetA(constraint) ? cpConstraintGetA(constraint)->data : 0);
-	}
-
-	inline cp::Body* getB(void)
-	{
-		return static_cast<cp::Body*>(cpConstraintGetB(constraint) ? cpConstraintGetB(constraint)->data : 0);
-	}
-
-	inline cpFloat getMaxForce(void)
-	{
-		return cpConstraintGetMaxForce(constraint);
-	}
-
-	inline void setMaxForce(cpFloat value)
-	{
-		cpConstraintSetMaxForce(constraint,value);
-	}
-
-	inline cpFloat getErrorBias(void)
-	{
-		return cpConstraintGetErrorBias(constraint);
-	}
-
-	inline void setErrorBias(cpFloat value)
-	{
-		cpConstraintSetErrorBias(constraint,value);
-	}
-
-	inline cpFloat getMaxBias(void)
-	{
-		return cpConstraintGetMaxBias(constraint);
-	}
-
-	inline void setMaxBias(cpFloat value)
-	{
-		cpConstraintSetMaxBias(constraint,value);
-	}
-
-	inline cpConstraintPreSolveFunc getPreSolveFunc(void)
-	{
-		return cpConstraintGetPreSolveFunc(constraint);
-	}
-
-	inline void setPreSolveFunc(cpConstraintPreSolveFunc value)
-	{
-		cpConstraintSetPreSolveFunc(constraint,value);
-	}
-
-	inline cpConstraintPostSolveFunc getPostSolveFunc(void)
-	{
-		return cpConstraintGetPostSolveFunc(constraint);
-	}
-
-	inline void setPostSolveFunc(cpConstraintPostSolveFunc value)
-	{
-		cpConstraintSetPostSolveFunc(constraint,value);
-	}
-
-	inline cpDataPointer getUserData(void)
-	{
-		return data;
-	}
-
-	inline void setUserData(cpDataPointer value)
-	{
-		data = value;
-	}
-
-	Constraint(cpConstraint* v)
-	{
-		constraint = v;
-		data = v->data;
-		v->data = this;
-	}
+	cpConstraint* get();
+	~Constraint();
+	void activateBodies();
+	cpFloat getImpulse();
+	cp::Space* getSpace(void);
+	cp::Body* getA(void);
+	cp::Body* getB(void);
+	cpFloat getMaxForce(void);
+	void setMaxForce(cpFloat value);
+	cpFloat getErrorBias(void);
+	void setErrorBias(cpFloat value);
+	cpFloat getMaxBias(void);
+	void setMaxBias(cpFloat value);
+	cpConstraintPreSolveFunc getPreSolveFunc(void);
+	void setPreSolveFunc(cpConstraintPreSolveFunc value);
+	cpConstraintPostSolveFunc getPostSolveFunc(void);
+	void setPostSolveFunc(cpConstraintPostSolveFunc value);
+	cpDataPointer getUserData(void);
+	void setUserData(cpDataPointer value);
+	Constraint(cpConstraint* v);
 
 };
-}//namespace cp
+};//namespace cp

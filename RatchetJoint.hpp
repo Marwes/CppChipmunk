@@ -1,66 +1,25 @@
 #pragma once
 
 #include "chipmunk.h"
+#include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class RatchetJoint : public Constraint{
+class RatchetJoint : public Constraint {
 protected:
-	cpRatchetJoint*ratchetjoint;
+	cpRatchetJoint* ratchetjoint;
 public:
-
-	cpRatchetJoint* get() const
-	{
-		return ratchetjoint;
-	}
-
-	operator cpRatchetJoint*() const
-	{
-		return ratchetjoint;
-	}
-
-	inline const cpConstraintClass *getClass()
-	{
-		return cpRatchetJointGetClass();
-	}
-
-	inline cpFloat getAngle(void)
-	{
-		return cpRatchetJointGetAngle(constraint);
-	}
-
-	inline void setAngle(cpFloat value)
-	{
-		cpRatchetJointSetAngle(constraint,value);
-	}
-
-	inline cpFloat getPhase(void)
-	{
-		return cpRatchetJointGetPhase(constraint);
-	}
-
-	inline void setPhase(cpFloat value)
-	{
-		cpRatchetJointSetPhase(constraint,value);
-	}
-
-	inline cpFloat getRatchet(void)
-	{
-		return cpRatchetJointGetRatchet(constraint);
-	}
-
-	inline void setRatchet(cpFloat value)
-	{
-		cpRatchetJointSetRatchet(constraint,value);
-	}
-
-	RatchetJoint(cpBody *a,cpBody *b,cpFloat phase,cpFloat ratchet)
-	 : Constraint(cpRatchetJointNew(a,b,phase,ratchet))
-	{
-		constraint->data = this;
-	}
+	cpRatchetJoint* get();
+	const cpConstraintClass *getClass();
+	RatchetJoint(cp::Body *a,cp::Body *b,cpFloat phase,cpFloat ratchet);
+	cpFloat getAngle(void);
+	void setAngle(cpFloat value);
+	cpFloat getPhase(void);
+	void setPhase(cpFloat value);
+	cpFloat getRatchet(void);
+	void setRatchet(cpFloat value);
 
 };
-}//namespace cp
+};//namespace cp

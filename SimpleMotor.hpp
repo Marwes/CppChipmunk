@@ -1,46 +1,21 @@
 #pragma once
 
 #include "chipmunk.h"
+#include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class SimpleMotor : public Constraint{
+class SimpleMotor : public Constraint {
 protected:
-	cpSimpleMotor*simplemotor;
+	cpSimpleMotor* simplemotor;
 public:
-
-	cpSimpleMotor* get() const
-	{
-		return simplemotor;
-	}
-
-	operator cpSimpleMotor*() const
-	{
-		return simplemotor;
-	}
-
-	inline const cpConstraintClass *getClass()
-	{
-		return cpSimpleMotorGetClass();
-	}
-
-	inline cpFloat getRate(void)
-	{
-		return cpSimpleMotorGetRate(constraint);
-	}
-
-	inline void setRate(cpFloat value)
-	{
-		cpSimpleMotorSetRate(constraint,value);
-	}
-
-	SimpleMotor(cpBody *a,cpBody *b,cpFloat rate)
-	 : Constraint(cpSimpleMotorNew(a,b,rate))
-	{
-		constraint->data = this;
-	}
+	cpSimpleMotor* get();
+	const cpConstraintClass *getClass();
+	SimpleMotor(cp::Body *a,cp::Body *b,cpFloat rate);
+	cpFloat getRate(void);
+	void setRate(cpFloat value);
 
 };
-}//namespace cp
+};//namespace cp

@@ -1,57 +1,24 @@
 #pragma once
 
 #include "chipmunk.h"
-#include "Vect.hpp"
+#include "chipmunk_declarations.hpp"
 #include "Shape.hpp"
+#include "Vect.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class SegmentShape : public Shape{
+class SegmentShape : public Shape {
 protected:
-	cpSegmentShape*segmentshape;
+	cpSegmentShape* segmentshape;
 public:
-
-	cpSegmentShape* get() const
-	{
-		return segmentshape;
-	}
-
-	operator cpSegmentShape*() const
-	{
-		return segmentshape;
-	}
-
-	inline void setNeighbors(cpVect prev,cpVect next)
-	{
-		cpSegmentShapeSetNeighbors(shape,prev,next);
-	}
-
-	inline cp::Vect getA(void)
-	{
-		return cpSegmentShapeGetA(shape);
-	}
-
-	inline cp::Vect getB(void)
-	{
-		return cpSegmentShapeGetB(shape);
-	}
-
-	inline cp::Vect getNormal(void)
-	{
-		return cpSegmentShapeGetNormal(shape);
-	}
-
-	inline cpFloat getRadius(void)
-	{
-		return cpSegmentShapeGetRadius(shape);
-	}
-
-	SegmentShape(cpBody *body,cpVect a,cpVect b,cpFloat radius)
-	 : Shape(cpSegmentShapeNew(body,a,b,radius))
-	{
-		shape->data = this;
-	}
+	cpSegmentShape* get();
+	SegmentShape(cp::Body *body,cp::Vect a,cp::Vect b,cpFloat radius);
+	void setNeighbors(cp::Vect prev,cp::Vect next);
+	cp::Vect getA(void);
+	cp::Vect getB(void);
+	cp::Vect getNormal(void);
+	cpFloat getRadius(void);
 
 };
-}//namespace cp
+};//namespace cp

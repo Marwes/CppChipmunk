@@ -1,63 +1,25 @@
 #pragma once
 
 #include "chipmunk.h"
-#include "Vect.hpp"
+#include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
+#include "Vect.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-
-class PivotJoint : public Constraint{
+class PivotJoint : public Constraint {
 protected:
-	cpPivotJoint*pivotjoint;
+	cpPivotJoint* pivotjoint;
 public:
-
-	cpPivotJoint* get() const
-	{
-		return pivotjoint;
-	}
-
-	operator cpPivotJoint*() const
-	{
-		return pivotjoint;
-	}
-
-	inline const cpConstraintClass *getClass()
-	{
-		return cpPivotJointGetClass();
-	}
-
-	inline cp::Vect getAnchr1(void)
-	{
-		return cpPivotJointGetAnchr1(constraint);
-	}
-
-	inline void setAnchr1(cp::Vect& value)
-	{
-		cpPivotJointSetAnchr1(constraint,value);
-	}
-
-	inline cp::Vect getAnchr2(void)
-	{
-		return cpPivotJointGetAnchr2(constraint);
-	}
-
-	inline void setAnchr2(cp::Vect& value)
-	{
-		cpPivotJointSetAnchr2(constraint,value);
-	}
-
-	PivotJoint(cpBody *a,cpBody *b,cpVect pivot)
-	 : Constraint(cpPivotJointNew(a,b,pivot))
-	{
-		constraint->data = this;
-	}
-
-	PivotJoint(cpBody *a,cpBody *b,cpVect anchr1,cpVect anchr2)
-	 : Constraint(cpPivotJointNew2(a,b,anchr1,anchr2))
-	{
-		constraint->data = this;
-	}
+	cpPivotJoint* get();
+	const cpConstraintClass *getClass();
+	PivotJoint(cp::Body *a,cp::Body *b,cp::Vect pivot);
+	PivotJoint(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2);
+	cp::Vect getAnchr1(void);
+	void setAnchr1(cp::Vect value);
+	cp::Vect getAnchr2(void);
+	void setAnchr2(cp::Vect value);
 
 };
-}//namespace cp
+};//namespace cp
