@@ -1,15 +1,13 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for c++ automatically generated on 09/09/12 16:52:11.
+ * Chipmunk binding for C++ automatically generated on 09/15/12 09:00:46.
  */
 #pragma once
 
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Shape.hpp"
-#include "Vect.hpp"
-#include "Body.hpp"
 
 namespace cp {
 
@@ -18,6 +16,7 @@ protected:
 	cpSegmentShape* segmentshape;
 public:
 	cpSegmentShape* get();
+/// Allocate and initialize a segment shape.
 	SegmentShape(cp::Body *body,cp::Vect a,cp::Vect b,cpFloat radius);
 	void setNeighbors(cp::Vect prev,cp::Vect next);
 	cp::Vect getA(void);

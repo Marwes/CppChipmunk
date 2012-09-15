@@ -26,7 +26,7 @@ local timestamp =
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for c++ automatically generated on ]]..os.date()..[[.
+ * Chipmunk binding for C++ automatically generated on ]]..os.date()..[[.
  */
 ]]
 
@@ -177,10 +177,10 @@ local functionHooks = {
 
 				local makeFunction = false
 				for _,v in ipairs(argTable) do if v.name == "data" then makeFunction = true end end
-				if not makeFunction then print("Skipping function: ", functionName) return end
+				if not makeFunction then print("Skipping std::function for : ", functionName) return end
 				makeFunction = false
 				for _,v in ipairs(argTable) do if v.name == "func" then makeFunction = true end end
-				if not makeFunction then print("Skipping function: ", functionName) return end
+				if not makeFunction then print("Skipping std::function for : ", functionName) return end
 
 				local methodName, struct = getMethod(functionName)
 				classes[struct].includes["functional"] = "#include <functional>\n"
@@ -457,6 +457,8 @@ function writeClasses( )
 
 			writeFile(outFolder.."include/"..outName, "#pragma once\n\n"..class:make())
 
+			class:addIncludesFrom(class.body)
+			class:addIncludesFrom(class.anonymousDefinitions)
 			local cppFileText = "#include \""..outName.."\"\n"
 			cppFileText = cppFileText..class:makeIncludes()
 
@@ -514,7 +516,7 @@ end
 
 --Returns a pattern that matches a C function
 function makeFunctionPattern( )
-	local func = lpeg.C(("const " + lpeg.P"") * allowed^1 * lpeg.S" *"^0) *
+	local func = (lpeg.P"static " * lpeg.P"inline ")^0 *  lpeg.C(("const " + lpeg.P"") * allowed^1 * lpeg.S" *"^0) *
 			lpeg.C(allowed^1) * space^0 * lpeg.S"(" * space^0 * makeArgumentPattern() * space^0 * lpeg.S")"
 	return func
 end
@@ -522,7 +524,6 @@ end
 
 ---------------------------------------
 --Patterns
-local functionPattern = makeFunctionPattern()
 local structPattern = "struct" * space^1 * lpeg.C(allowed^1) *((space^1 * allowed^1 * ";") + (space^0 * "{"))
 local propertyPattern = "\n" * space^0 * lpeg.P"CP_" * lpeg.C(lpeg.P"Define" + lpeg.P"Declare") * lpeg.C(allowed^1) 
 	* space^0 * "(" 
@@ -535,7 +536,11 @@ local typedefPattern = "typedef" * space^1 * lpeg.C(allowed^1 * space^0 * lpeg.P
 	* space^0 * "*" * space^0 * lpeg.C(allowed^1) * space^0 * ")" * space^0 * "("
 	* makeArgumentPattern() * ")" * space^0 * ";"
 
-local commentPattern = lpeg.C("///" * -lpeg.P("\n///"))
+local beginComment = lpeg.P"//"
+local endCommment = lpeg.P"\n"
+local notEndComment = (1 - endCommment)^0
+local commentPattern = beginComment * notEndComment * endCommment
+local functionPattern = lpeg.C(commentPattern^0) * makeFunctionPattern()
 
 --Calls the callback with all the values that are returned from the pattern matching
 function matchAll( pattern, text, callback )
@@ -595,6 +600,9 @@ function Method:makeDeclaration()
 		out = out..self:makeMethodBody()
 	else
 		out = out..";\n"
+	end
+	if self.comment then
+		out = self.comment..out
 	end
 	return out
 end
@@ -670,13 +678,11 @@ function Class:addMethod(method)
 end
 
 function Class:make( )
-	local body = self:makeClassBody()
-	self:addIncludesFrom(body)
-	self:addIncludesFrom(self.anonymousDefinitions)
 	local out = self:makeIncludes()
+	self.body = self:makeClassBody()
 	out = out.."namespace "..namespace.." {\n"
 	out = out..self.additionalText.."\n"
-	out = out..body
+	out = out..self.body
 
 	out = out.."};//namespace "..namespace.."\n"
 	return out
@@ -1122,7 +1128,7 @@ end
 --Parses the text for any functions that it finds as well as any property macros
 function parseText(text )
 	matchAll(functionPattern, text,
-		function (b, returnType, functionName, tab, e)
+		function (b, comment, returnType, functionName, tab, e)
 		if b then
 			local _, struct = getMethod(functionName)
 			if struct and classes[struct] then
@@ -1141,6 +1147,7 @@ function parseText(text )
 
 			--assert(struct == cppStruct)
 			if struct and getmetatable(method) == Method then
+				method.comment = comment
 				classes[struct].hasMethods = true
 				classes[struct]:addMethod(method)
 			end

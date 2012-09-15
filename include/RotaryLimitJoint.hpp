@@ -1,14 +1,13 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for c++ automatically generated on 09/09/12 16:52:11.
+ * Chipmunk binding for C++ automatically generated on 09/15/12 09:00:46.
  */
 #pragma once
 
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
-#include "Body.hpp"
 
 namespace cp {
 
@@ -18,6 +17,7 @@ protected:
 public:
 	cpRotaryLimitJoint* get();
 	const cpConstraintClass *getClass();
+/// Allocate and initialize a damped rotary limit joint.
 	RotaryLimitJoint(cp::Body *a,cp::Body *b,cpFloat min,cpFloat max);
 	cpFloat getMin(void);
 	void setMin(cpFloat value);
