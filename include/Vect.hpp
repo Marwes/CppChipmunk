@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/15/12 09:00:46.
+ * Chipmunk binding for C++ automatically generated on 09/15/12 09:55:02.
  */
 #pragma once
 
@@ -14,7 +14,7 @@ protected:
 public:
 	Vect(cpVect cv);
 /// Convenience constructor for cpVect structs.
-	Vect(const cpFloat x,const cpFloat y);
+	Vect(const cpFloat x = 0,const cpFloat y = 0);
 /// Spherical linearly interpolate between v1 and v2.
 	cp::Vect slerp(Vect& v2,const cpFloat t);
 /// Spherical linearly interpolate between v1 towards v2 by no more than angle a radians

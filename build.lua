@@ -210,8 +210,7 @@ local functionHooks = {
 
 				local functionTypedef = v1.type:sub(3)
 				v1.type = functionTypedef
-
-				classes[struct].additionalText = classes[struct].additionalText.."\ttypedef "..stdFunc..functionTypedef..";\n"
+				classes[struct].additionalText = classes[struct].additionalText..typedef.comment.."\ttypedef "..stdFunc..functionTypedef..";\n"
 
 				local returnIfNotVoid = returnType:find("void%s*%**") and "" or "return "
 				local stdFuncReturnIfNotVoid = functionReturnType:find("void%s*%**") and "" or "return "
@@ -524,6 +523,10 @@ end
 
 ---------------------------------------
 --Patterns
+local beginComment = lpeg.P"//"
+local endCommment = lpeg.P"\n"
+local notEndComment = (1 - endCommment)^0
+local commentPattern = beginComment * notEndComment * endCommment
 local structPattern = "struct" * space^1 * lpeg.C(allowed^1) *((space^1 * allowed^1 * ";") + (space^0 * "{"))
 local propertyPattern = "\n" * space^0 * lpeg.P"CP_" * lpeg.C(lpeg.P"Define" + lpeg.P"Declare") * lpeg.C(allowed^1) 
 	* space^0 * "(" 
@@ -532,14 +535,10 @@ local propertyPattern = "\n" * space^0 * lpeg.P"CP_" * lpeg.C(lpeg.P"Define" + l
 	* space^0 * lpeg.C(allowed^1)
 	* ((space^0 * "," * space^0 * lpeg.C(allowed^1)) + "")
 
-local typedefPattern = "typedef" * space^1 * lpeg.C(allowed^1 * space^0 * lpeg.P"*"^0) * space^0 * "("
+local typedefPattern = lpeg.C(commentPattern^0) * "typedef" * space^1 * lpeg.C(allowed^1 * space^0 * lpeg.P"*"^0) * space^0 * "("
 	* space^0 * "*" * space^0 * lpeg.C(allowed^1) * space^0 * ")" * space^0 * "("
 	* makeArgumentPattern() * ")" * space^0 * ";"
 
-local beginComment = lpeg.P"//"
-local endCommment = lpeg.P"\n"
-local notEndComment = (1 - endCommment)^0
-local commentPattern = beginComment * notEndComment * endCommment
 local functionPattern = lpeg.C(commentPattern^0) * makeFunctionPattern()
 
 --Calls the callback with all the values that are returned from the pattern matching
@@ -595,7 +594,7 @@ function Method:new( tab )
 end
 
 function Method:makeDeclaration()
-	local out = "\t"..self.returnType..self.name.."(".. makeRawParameters(self.parameters)..")"
+	local out = "\t"..self.returnType..self.name.."(".. makeRawParameters(self.parameters, true)..")"
 	if self.inline then
 		out = out..self:makeMethodBody()
 	else
@@ -807,12 +806,15 @@ end
 
 --Makes a parameter list from a table without any modifcations
 --tab[i] = {name="body", type="cpBody *"}
-function makeRawParameters(tab )
+function makeRawParameters(tab,default )
 	local out = ""
 	for k,v in ipairs(tab) do
 		if not v.name then v.name = "" end
-		--if v.type == "cpVect " then v.type = "cpVect& " end
-		out = out..v["type"]..v["name"]..","
+		if default and v.default then
+			out = out..v["type"]..v["name"].." = "..v.default..","
+		else
+			out = out..v["type"]..v["name"]..","
+		end
 	end
 	if out:sub(#out) == "," then
 		out = out:sub(1, #out-1)
@@ -1044,8 +1046,9 @@ function buildTypes( text )
 	end)
 
 	matchAll(typedefPattern, text,
-		function ( b,returnType, name, argTable,e)
+		function ( b, comment, returnType, name, argTable,e)
 			functionTypedefs[name] = {
+				comment=comment,
 				returnType= returnType,
 				args=argTable
 			}

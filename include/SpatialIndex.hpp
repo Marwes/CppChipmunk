@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/15/12 09:00:46.
+ * Chipmunk binding for C++ automatically generated on 09/15/12 09:55:02.
  */
 #pragma once
 
@@ -10,10 +10,15 @@
 #include <functional>
 
 namespace cp {
+/// Spatial query callback function type.
 	typedef std::function<void (void *,void *)> SpatialIndexQueryFunc ;
+/// Spatial index/object iterator callback function type.
 	typedef std::function<void (void *)> SpatialIndexIteratorFunc ;
+/// Spatial query callback function type.
 	typedef std::function<void (void *,void *)> SpatialIndexQueryFunc ;
+/// Spatial segment query callback function type.
 	typedef std::function<cpFloat (void *,void *)> SpatialIndexSegmentQueryFunc ;
+/// Spatial query callback function type.
 	typedef std::function<void (void *,void *)> SpatialIndexQueryFunc ;
 
 class SpatialIndex {

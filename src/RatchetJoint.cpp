@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/15/12 09:00:46.
+ * Chipmunk binding for C++ automatically generated on 09/15/12 09:55:02.
  */
 #include "RatchetJoint.hpp"
 #include "chipmunk.h"
