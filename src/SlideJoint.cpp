@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 19:02:38.
  */
 #include "SlideJoint.hpp"
 #include "chipmunk.h"
@@ -12,15 +12,11 @@
 
 namespace cp {
 
-cpSlideJoint* SlideJoint::get()
-{
-		return slidejoint;
-}
 const cpConstraintClass *SlideJoint::getClass()
 {
 		return cpSlideJointGetClass();
 }
-SlideJoint::SlideJoint(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2,cpFloat min,cpFloat max)
+SlideJoint::SlideJoint(cp::Body *a,cp::Body *b,cpVect anchr1,cpVect anchr2,cpFloat min,cpFloat max)
 	: Constraint(cpSlideJointNew(a ? a->get() : 0,b ? b->get() : 0,anchr1,anchr2,min,max))
 {
 		constraint->data = this;

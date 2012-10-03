@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #pragma once
 
@@ -14,13 +14,19 @@ class Arbiter {
 protected:
 	cpArbiter* arb;
 public:
-	cpArbiter* get();
+	cpArbiter* get(){
+		return arb;
+}
+	void unthread();
+	void preStep(cpFloat dt,cpFloat bias,cpFloat slop);
+	void applyCachedImpulse(cpFloat dt_coef);
+	void applyImpulse();
 /// Calculate the total impulse that was applied by this arbiter.
 /// This function should only be called from a post-solve, post-step or cpBodyEachArbiter callback.
-	cp::Vect totalImpulse();
+	cpVect totalImpulse();
 /// Calculate the total impulse including the friction that was applied by this arbiter.
 /// This function should only be called from a post-solve, post-step or cpBodyEachArbiter callback.
-	cp::Vect totalImpulseWithFriction();
+	cpVect totalImpulseWithFriction();
 /// Calculate the amount of energy lost in a collision including static, but not dynamic friction.
 /// This function should only be called from a post-solve, post-step or cpBodyEachArbiter callback.
 	cpFloat totalKE();
@@ -31,11 +37,12 @@ public:
 /// Return the colliding shapes involved for this arbiter.
 /// The order of their cpSpace.collision_type values will match
 /// the order set when the collision handler was registered.
-	void getShapes(cp::Shape *&a,cp::Shape *&b);
+	void getShapes(cpShape *&a,cpShape *&b);
+/// A macro shortcut for defining and retrieving the shapes from an arbiter.
 /// Return the colliding bodies involved for this arbiter.
 /// The order of the cpSpace.collision_type the bodies are associated with values will match
 /// the order set when the collision handler was registered.
-	void getBodies(cp::Body *&a,cp::Body *&b);
+	void getBodies(cpBody *&a,cpBody *&b);
 /// Return a contact set from an arbiter.
 	cpContactPointSet getContactPointSet();
 /// Returns true if this is the first step a pair of objects started colliding.
@@ -43,9 +50,9 @@ public:
 /// Get the number of contact points for this arbiter.
 	int getCount();
 /// Get the normal of the @c ith contact point.
-	cp::Vect getNormal(int i);
+	cpVect getNormal(int i);
 /// Get the position of the @c ith contact point.
-	cp::Vect getPoint(int i);
+	cpVect getPoint(int i);
 /// Get the depth of the @c ith contact point.
 	cpFloat getDepth(int i);
 	cpFloat getElasticity(void);

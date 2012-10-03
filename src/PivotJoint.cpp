@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 19:02:38.
  */
 #include "PivotJoint.hpp"
 #include "chipmunk.h"
@@ -12,20 +12,16 @@
 
 namespace cp {
 
-cpPivotJoint* PivotJoint::get()
-{
-		return pivotjoint;
-}
 const cpConstraintClass *PivotJoint::getClass()
 {
 		return cpPivotJointGetClass();
 }
-PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,cp::Vect pivot)
+PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,cpVect pivot)
 	: Constraint(cpPivotJointNew(a ? a->get() : 0,b ? b->get() : 0,pivot))
 {
 		constraint->data = this;
 }
-PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2)
+PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,cpVect anchr1,cpVect anchr2)
 	: Constraint(cpPivotJointNew2(a ? a->get() : 0,b ? b->get() : 0,anchr1,anchr2))
 {
 		constraint->data = this;

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #pragma once
 
@@ -15,21 +15,24 @@ protected:
 	cpShape* shape;
 	cpDataPointer data;
 public:
-	cpShape* get();
+	cpShape* get(){
+		return shape;
+}
+	void updateFunc(void *unused);
 /// Destroy and Free a shape.
 	~Shape();
 /// Update, cache and return the bounding box of a shape based on the body it's attached to.
-	cp::BB cacheBB();
+	cpBB cacheBB();
 /// Update, cache and return the bounding box of a shape with an explicit transformation.
-	cp::BB update(cp::Vect pos,cp::Vect rot);
+	cpBB update(cpVect pos,cpVect rot);
 /// Test if a point lies within a shape.
-	cpBool pointQuery(cp::Vect p);
+	cpBool pointQuery(cpVect p);
 /// Perform a nearest point query. It finds the closest point on the surface of shape to a specific point.
 /// The value returned is the distance between the points. A negative distance means the point is inside the shape.
-	cpFloat nearestPointQuery(cp::Vect p,cpNearestPointQueryInfo *out);
+	cpFloat nearestPointQuery(cpVect p,cpNearestPointQueryInfo *out);
 /// Perform a segment query against a shape. @c info must be a pointer to a valid cpSegmentQueryInfo structure.
-	cpBool segmentQuery(cp::Vect a,cp::Vect b,cpSegmentQueryInfo *info);
-	void setBody(cp::Body *body);
+	cpBool segmentQuery(cpVect a,cpVect b,cpSegmentQueryInfo *info);
+	void setBody(cpBody *body);
 	cp::Space* getSpace(void);
 	cp::Body* getBody(void);
 	cp::BB getBB(void);

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #include "Shape.hpp"
 #include "chipmunk.h"
@@ -13,35 +13,35 @@
 
 namespace cp {
 
-cpShape* Shape::get()
+void Shape::updateFunc(void *unused)
 {
-		return shape;
+		cpShapeUpdateFunc(shape,unused);
 }
 Shape::~Shape()
 {
 		cpShapeFree(shape);
 }
-cp::BB Shape::cacheBB()
+cpBB Shape::cacheBB()
 {
 		return cpShapeCacheBB(shape);
 }
-cp::BB Shape::update(cp::Vect pos,cp::Vect rot)
+cpBB Shape::update(cpVect pos,cpVect rot)
 {
 		return cpShapeUpdate(shape,pos,rot);
 }
-cpBool Shape::pointQuery(cp::Vect p)
+cpBool Shape::pointQuery(cpVect p)
 {
 		return cpShapePointQuery(shape,p);
 }
-cpFloat Shape::nearestPointQuery(cp::Vect p,cpNearestPointQueryInfo *out)
+cpFloat Shape::nearestPointQuery(cpVect p,cpNearestPointQueryInfo *out)
 {
 		return cpShapeNearestPointQuery(shape,p,out);
 }
-cpBool Shape::segmentQuery(cp::Vect a,cp::Vect b,cpSegmentQueryInfo *info)
+cpBool Shape::segmentQuery(cpVect a,cpVect b,cpSegmentQueryInfo *info)
 {
 		return cpShapeSegmentQuery(shape,a,b,info);
 }
-void Shape::setBody(cp::Body *body)
+void Shape::setBody(cpBody *body)
 {
 		cpShapeSetBody(shape,body ? body->get() : 0);
 }

@@ -193,7 +193,7 @@ functionHooks = {
 		toCppTypes(argTable)
 		local args = copyTable(argTable)
 		addGetCall(args, struct)
-		firstArgThisOrMember(args, struct)
+		makeFirstArgThisOrMember(args, struct)
 
 		local initializerList = { }
 		if type(classes[struct].parent) == "table" then

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #pragma once
 
@@ -25,20 +25,20 @@ public:
 /// Returns true if @c bb contains @c v.
 	cpBool containsVect(const cpVect v);
 /// Returns a bounding box that holds both bounding boxes.
-	cp::BB merge(const cpBB b);
+	cpBB merge(const cpBB b);
 /// Returns a bounding box that holds both @c bb and @c v.
-	cp::BB expand(const cpVect v);
+	cpBB expand(const cpVect v);
 /// Returns the area of the bounding box.
 	cpFloat area();
 /// Merges @c a and @c b and returns the area of the merged bounding box.
-	cpFloat mergedArea(cp::BB b);
+	cpFloat mergedArea(cpBB b);
 /// Returns the fraction along the segment query the cpBB is hit. Returns INFINITY if it doesn't hit.
-	cpFloat segmentQuery(cp::Vect a,cp::Vect b);
+	cpFloat segmentQuery(cpVect a,cpVect b);
 /// Return true if the bounding box intersects the line segment with ends @c a and @c b.
-	cpBool intersectsSegment(cp::Vect a,cp::Vect b);
+	cpBool intersectsSegment(cpVect a,cpVect b);
 // TODO edge case issue
 /// Wrap a vector to a bounding box.
-	cp::Vect wrapVect(const cpVect v);
+	cpVect wrapVect(const cpVect v);
 
 };
 };//namespace cp

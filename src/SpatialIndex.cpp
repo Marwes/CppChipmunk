@@ -1,15 +1,12 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 16:07:42.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #include "SpatialIndex.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include <functional>
-#include "Vect.hpp"
-#include "BB.hpp"
-#include "SpatialIndex.hpp"
 
 class SpatialIndex;
 namespace {
@@ -22,15 +19,11 @@ namespace {
 
 namespace cp {
 
-cpSpatialIndex* SpatialIndex::get()
-{
-		return index;
-}
 SpatialIndex::~SpatialIndex()
 {
 		cpSpatialIndexFree(index);
 }
-void SpatialIndex::collideStatic(cp::SpatialIndex *staticIndex,cpSpatialIndexQueryFunc func,void *data)
+void SpatialIndex::collideStatic(cpSpatialIndex *staticIndex,cpSpatialIndexQueryFunc func,void *data)
 {
 		cpSpatialIndexCollideStatic(index,staticIndex ? staticIndex->get() : 0,func,data);
 }
@@ -70,7 +63,7 @@ void SpatialIndex::reindexObject(void *obj,cpHashValue hashid)
 {
 		cpSpatialIndexReindexObject(index,obj,hashid);
 }
-void SpatialIndex::query(void *obj,cp::BB bb,cpSpatialIndexQueryFunc func,void *data)
+void SpatialIndex::query(void *obj,cpBB bb,cpSpatialIndexQueryFunc func,void *data)
 {
 		cpSpatialIndexQuery(index,obj,bb,func,data);
 }
@@ -78,7 +71,7 @@ void SpatialIndex::query(void *obj,cpBB bb,SpatialIndexQueryFunc func)
 {
 		cpSpatialIndexQuery(index,obj,bb,*SpatialIndexQuery,&func);
 }
-void SpatialIndex::segmentQuery(void *obj,cp::Vect a,cp::Vect b,cpFloat t_exit,cpSpatialIndexSegmentQueryFunc func,void *data)
+void SpatialIndex::segmentQuery(void *obj,cpVect a,cpVect b,cpFloat t_exit,cpSpatialIndexSegmentQueryFunc func,void *data)
 {
 		cpSpatialIndexSegmentQuery(index,obj,a,b,t_exit,func,data);
 }

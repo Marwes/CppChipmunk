@@ -1,13 +1,11 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #include "BB.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
-#include "BB.hpp"
-#include "Vect.hpp"
 
 namespace cp {
 
@@ -35,11 +33,11 @@ cpBool BB::containsVect(const cpVect v)
 {
 		return cpBBContainsVect(*this,v);
 }
-cp::BB BB::merge(const cpBB b)
+cpBB BB::merge(const cpBB b)
 {
 		return cpBBMerge(*this,b);
 }
-cp::BB BB::expand(const cpVect v)
+cpBB BB::expand(const cpVect v)
 {
 		return cpBBExpand(*this,v);
 }
@@ -47,19 +45,19 @@ cpFloat BB::area()
 {
 		return cpBBArea(*this);
 }
-cpFloat BB::mergedArea(cp::BB b)
+cpFloat BB::mergedArea(cpBB b)
 {
 		return cpBBMergedArea(*this,b);
 }
-cpFloat BB::segmentQuery(cp::Vect a,cp::Vect b)
+cpFloat BB::segmentQuery(cpVect a,cpVect b)
 {
 		return cpBBSegmentQuery(*this,a,b);
 }
-cpBool BB::intersectsSegment(cp::Vect a,cp::Vect b)
+cpBool BB::intersectsSegment(cpVect a,cpVect b)
 {
 		return cpBBIntersectsSegment(*this,a,b);
 }
-cp::Vect BB::wrapVect(const cpVect v)
+cpVect BB::wrapVect(const cpVect v)
 {
 		return cpBBWrapVect(*this,v);
 }

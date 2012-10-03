@@ -1,9 +1,15 @@
 --Configuration
-recursive = true
+DEBUG = true
+if DEBUG then --Skip the constraints for the moment while debugging
+	recursive = false
+else
+	recursive = true
+end
 directory = "."
 outFolder = ""
 chipmunkPath = "../Chipmunk-6.1.1/include/chipmunk"
 namespace = "cp"
+
 
 
 local io = require "io"
@@ -40,6 +46,13 @@ classes = {}
 --Table for all typedefs for functions that are found
 functionTypedefs = {}
 
+functions = {}
+
+function cleanText(text)
+	text = text:gsub("/%*.+%*/", "")
+	text = text:gsub("#define[^\n]+[^\\]\n", "")
+	return text
+end
 
 --Fills the table classes with information from all the structs encountered
 --This is called before the actual parsing of functions since we need information from
@@ -49,7 +62,7 @@ functionTypedefs = {}
 function buildTypesFromDir( dir, recursive )
 	for file in lfs.dir(dir) do
 		local fullName = dir.."/"..file
-		if file:find("%.h") and file:sub(1,2) == "cp" then
+		if file:find("%.h") or file == "chipmunk.h" then --Means we skip chipmunk_unsafe, chipmunk_types etc
 			local f = assert(io.open(dir.."/"..file))
 			local text = f:read("*all")
 			f:close()
@@ -66,10 +79,11 @@ end
 function parseTextFromDir( dir, recursive )
 	for file in lfs.dir(dir) do
 		local fullName = dir.."/"..file
-		if file:find("%.h") and file:sub(1,2) == "cp" then
+		if file:find("%.h") or file == "chipmunk.h" then --Means we skip chipmunk_unsafe, chipmunk_types etc
 			local f = assert(io.open(dir.."/"..file))
 			local text = f:read("*all")
 			f:close()
+			text = cleanText(text)
 			parseText(text)
 		elseif recursive and file ~= "." and file ~= ".." and lfs.attributes(fullName, "mode") =="directory" then
 			parseTextFromDir(fullName, recursive)
@@ -142,6 +156,13 @@ function writeIncludeAll()
 			includeAllText = includeAllText..'#include "'..v.name..'.hpp"\n'
 		end
 	end
+
+	includeAllText = includeAllText.."namespace "..namespace.." {\n"
+
+	for i, func in ipairs(functions) do
+		includeAllText = includeAllText..func:makeDeclaration().."\n"
+	end
+	includeAllText = includeAllText.."}//namespace "..namespace.."\n"
 
 	writeFile(outFolder.."include/".."chipmunk.hpp", includeAllText)
 end
@@ -332,16 +353,18 @@ function makeStdFunction(functionReturnType, functionArgs)
 end
 
 function makeReturn(returnType )
-	if returnType == "void" then return "" end
+	if returnType:gsub("%s*", "") == "void" then return "" end
+	return "return "
 end
 
 --Removes any spaces and pointers to a struct
 function toRawStruct( struct )
-	local out = struct:gsub("%s*", ""):gsub("%*", ""):gsub("::", "")
+	local out = struct:gsub("const ", ""):gsub("%s*", ""):gsub("%*", ""):gsub("::", "")
 	return out
 end
 
 function toClass( struct )
+	if not classes[struct] then return struct end
 	if namespace == "" then return struct:sub(3) end
 	return namespace.."::"..struct:sub(3)
 end
@@ -398,7 +421,7 @@ function makeRawArguments( tab )
 	return out
 end
 
-function makeArguments(tab, struct, firstArgThisOrMemberIsThis)
+function makeArguments(tab, struct, makeFirstArgThisOrMemberIsThis)
 	local out = ""
 	for k,v in ipairs(tab) do
 		local rawStruct = toRawStruct(v.type)
@@ -462,7 +485,7 @@ function addGetCall( tab,struct )
 end
 
 --Determines if the first argument should be '*this' or the member of the class (the pointer to the c struct)
-function firstArgThisOrMember( argTable, struct)
+function makeFirstArgThisOrMember( argTable, struct)
 	if struct and argTable[1].type:find(struct) then
 		if classes[struct].member and classes[struct].member ~= "" then
 			argTable[1].name = classes[struct].member
@@ -478,6 +501,7 @@ function makeCppMethod(returnType, functionName, argTable )
 
 	local returnIfNotVoid = returnType:find("void%s*%**") and "" or "return "
 	local methodName, struct = getMethodInfo(functionName)
+	if not struct then return end --If we cant find the struct name return since it is not a method
 	local returnStruct = toRawStruct(returnType) --We need the struct without it being a pointer to check if it is a type we have a class for
 	
 	if returnIfNotVoid ~= "" and classes[returnStruct] and classes[returnStruct].hasMethods and struct then 
@@ -493,7 +517,7 @@ function makeCppMethod(returnType, functionName, argTable )
 	end
 
 	addGetCall(tab, struct)
-	firstArgThisOrMember(tab, struct)
+	makeFirstArgThisOrMember(tab, struct)
 	local argString = makeRawArguments(tab, struct, true)
 	table.remove(tab, 1)
 	table.remove(argTable, 1)
@@ -510,9 +534,29 @@ function makeCppMethod(returnType, functionName, argTable )
 		body = returnIfNotVoid..body..";\n"
 	end
 
-	return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
+	return Method:new({ 
+		returnType=returnType,
+		name=methodName,
+		body=body,
+		parameters=argTable})
+	, struct
 end
 
+function makeFunction(returnType, functionName, argTable )
+	local cppFunctionName = functionName:sub(3,3):lower()..functionName:sub(4)
+	toCppTypes(argTable)
+
+	local body = makeReturn(returnType)..functionName.."("..makeRawArguments(argTable)..");\n"
+	print(body)
+	return Method:new({
+		inline=true,
+		returnType=toClass(returnType),
+		name=cppFunctionName,
+		body=body,
+		parameters=argTable
+
+		})
+end
 
 
 
@@ -560,13 +604,10 @@ function buildTypes( text )
 		local hasMethods = text:find("%w+%s*"..structName.."[_%w]+%s*%(")
 		--Construct from a pointer to a cpStruct
 		
-
-
-
-
 		local methods ={
 		Method:new({		
 				name="get",
+				inline=true,
 				body="return "..chipmunkMember..";\n",
 				returnType=structName..pointer.." ",
 				parameters= {type="void", name=""}
@@ -638,19 +679,28 @@ function parseText(text )
 	matchAll(functionPattern, text,
 		function (b, comment, returnType, functionName, tab, e)
 		if b then
+			if functionName:find("Moment") then print(functionName) end
 			local _, struct = getMethodInfo(functionName)
 			if struct and classes[struct] then
 				classes[struct].hasMethods = true
 			end
 
+			--Test all the hooks
 			local method, struct = nil, nil
 			for _,hook in ipairs(functionHooks) do
 				method, struct = hook(returnType, functionName, tab)
 				if method then break end
 			end
-
+			--Try a normal method
 			if not method then
 				method, struct = makeCppMethod(returnType, functionName, tab)
+			end
+
+			--Try a non member function
+			if not method then
+				local func = makeFunction(returnType, functionName, tab)
+				func.comment = comment
+				table.insert(functions, func)
 			end
 
 			--assert(struct == cppStruct)

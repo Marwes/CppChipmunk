@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #pragma once
 
@@ -15,9 +15,11 @@ class SpaceHash : public SpatialIndex {
 protected:
 	cpSpaceHash* hash;
 public:
-	cpSpaceHash* get();
+	cpSpaceHash* get(){
+		return hash;
+}
 /// Allocate and initialize a spatial hash.
-	SpaceHash(cpFloat celldim,int cells,cpSpatialIndexBBFunc bbfunc,cp::SpatialIndex *staticIndex);
+	SpaceHash(cpFloat celldim,int cells,cpSpatialIndexBBFunc bbfunc,cpSpatialIndex *staticIndex);
 /// Change the cell dimensions and table size of the spatial hash to tune it.
 /// The cell dimensions should roughly match the average size of your objects
 /// and the table size should be ~10 larger than the number of objects inserted.

@@ -1,27 +1,25 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 19:27:37.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #include "Space.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include <unordered_map>
+#include <functional>
 #include "Space.hpp"
 #include "Arbiter.hpp"
-#include "BB.hpp"
-#include "Shape.hpp"
-#include <functional>
 #include "Vect.hpp"
-#include "Constraint.hpp"
+#include "Shape.hpp"
 #include "Body.hpp"
 
 class Space;
 namespace {
-	cpBool internal_CollisionBeginFunc (cpArbiter *arb,cpSpace *space,void *data);
-	cpBool internal_CollisionPreSolveFunc (cpArbiter *arb,cpSpace *space,void *data);
-	void internal_CollisionPostSolveFunc (cpArbiter *arb,cpSpace *space,void *data);
-	void internal_CollisionSeparateFunc (cpArbiter *arb,cpSpace *space,void *data);
+	cpBool internal_cpCollisionBeginFunc (cpArbiter *arb,cpSpace *space,void *data);
+	cpBool internal_cpCollisionPreSolveFunc (cpArbiter *arb,cpSpace *space,void *data);
+	void internal_cpCollisionPostSolveFunc (cpArbiter *arb,cpSpace *space,void *data);
+	void internal_cpCollisionSeparateFunc (cpArbiter *arb,cpSpace *space,void *data);
 	void SpaceAddPostStepCallback(cpSpace *space,void *obj,void *data);
 	void SpacePointQuery(cpShape *shape,void *data);
 	void SpaceNearestPointQuery(cpShape *shape,cpFloat distance,cpVect point,void *data);
@@ -35,9 +33,62 @@ namespace {
 
 namespace cp {
 
-cpSpace* Space::get()
+void Space::nearestPointQuery_b(cpVect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryBlock block)
 {
-		return space;
+		cpSpaceNearestPointQuery_b(space,point,maxDistance,layers,group,block);
+}
+void Space::segmentQuery_b(cpVect start,cpVect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryBlock block)
+{
+		cpSpaceSegmentQuery_b(space,start,end,layers,group,block);
+}
+void Space::BBQuery_b(cpBB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryBlock block)
+{
+		cpSpaceBBQuery_b(space,bb,layers,group,block);
+}
+cpBool Space::shapeQuery_b(cpShape *shape,cpSpaceShapeQueryBlock block)
+{
+		return cpSpaceShapeQuery_b(space,shape ? shape->get() : 0,block);
+}
+void Space::processComponents(cpFloat dt)
+{
+		cpSpaceProcessComponents(space,dt);
+}
+void Space::pushFreshContactBuffer()
+{
+		cpSpacePushFreshContactBuffer(space);
+}
+void Space::pushContacts(int count)
+{
+		cpSpacePushContacts(space,count);
+}
+cpPostStepCallback *Space::getPostStepCallback(void *key)
+{
+		cpPostStepCallback * temp = cpSpaceGetPostStepCallback(space,key);
+		return static_cast<cpPostStepCallback *>(temp ? temp->data : 0);
+}
+cpBool Space::arbiterSetFilter(cpSpace *space)
+{
+		return cpSpaceArbiterSetFilter(arb ? arb->get() : 0,get());
+}
+void Space::filterArbiters(cpBody *body,cpShape *filter)
+{
+		cpSpaceFilterArbiters(space,body ? body->get() : 0,filter ? filter->get() : 0);
+}
+void Space::activateBody(cpBody *body)
+{
+		cpSpaceActivateBody(space,body ? body->get() : 0);
+}
+void Space::lock()
+{
+		cpSpaceLock(space);
+}
+void Space::unlock(cpBool runPostStep)
+{
+		cpSpaceUnlock(space,runPostStep);
+}
+void Space::collideShapes(cpShape *b,cpSpace *space)
+{
+		cpSpaceCollideShapes(a ? a->get() : 0,b ? b->get() : 0,get());
 }
 Space::Space(void)
 	: space(cpSpaceNew()),
@@ -57,7 +108,7 @@ void Space::setDefaultCollisionHandler(cpCollisionBeginFunc begin,cpCollisionPre
 {
 		cpSpaceSetDefaultCollisionHandler(space,begin,preSolve,postSolve,separate,data);
 }
-void Space::addCollisionHandler(cpCollisionType a,cpCollisionType b,const CollisionBeginFunc & begin,const CollisionPreSolveFunc & preSolve,const CollisionPostSolveFunc & postSolve,const CollisionSeparateFunc & separate,void *data)
+void Space::addCollisionHandler(cpCollisionType a,cpCollisionType b,const cpCollisionBeginFunc & begin,const cpCollisionPreSolveFunc & preSolve,const cpCollisionPostSolveFunc & postSolve,const cpCollisionSeparateFunc & separate,void *data)
 {
 		CollisionHandler& handler = collisionHandlers[std::make_pair(a,b)];
 			handler.begin = begin;
@@ -65,7 +116,7 @@ void Space::addCollisionHandler(cpCollisionType a,cpCollisionType b,const Collis
 			handler.postSolve = postSolve;
 			handler.separate = separate;
 			handler.data = data;
-			cpSpaceAddCollisionHandler(space, a, b, !begin ?  0 : internal_CollisionBeginFunc , !preSolve ?  0 : internal_CollisionPreSolveFunc , !postSolve ?  0 : internal_CollisionPostSolveFunc , !separate ?  0 : internal_CollisionSeparateFunc ,  &handler);
+			cpSpaceAddCollisionHandler(space, a, b, !begin ?  0 : internal_cpCollisionBeginFunc , !preSolve ?  0 : internal_cpCollisionPreSolveFunc , !postSolve ?  0 : internal_cpCollisionPostSolveFunc , !separate ?  0 : internal_cpCollisionSeparateFunc ,  &handler);
 }
 void Space::addCollisionHandler(cpCollisionType a,cpCollisionType b,cpCollisionBeginFunc begin,cpCollisionPreSolveFunc preSolve,cpCollisionPostSolveFunc postSolve,cpCollisionSeparateFunc separate,void *data)
 {
@@ -76,53 +127,53 @@ void Space::removeCollisionHandler(cpCollisionType a,cpCollisionType b)
 		collisionHandlers.erase(std::make_pair(a, b));
 cpSpaceRemoveCollisionHandler(get(),a,b);
 }
-cp::Shape* Space::addShape(cp::Shape *shape)
+cpShape* Space::addShape(cpShape *shape)
 {
 		cpShape*  temp = cpSpaceAddShape(space,shape ? shape->get() : 0);
-		return static_cast<cp::Shape* >(temp ? temp->data : 0);
+		return static_cast<cpShape* >(temp ? temp->data : 0);
 }
-cp::Shape* Space::addStaticShape(cp::Shape *shape)
+cpShape* Space::addStaticShape(cpShape *shape)
 {
 		cpShape*  temp = cpSpaceAddStaticShape(space,shape ? shape->get() : 0);
-		return static_cast<cp::Shape* >(temp ? temp->data : 0);
+		return static_cast<cpShape* >(temp ? temp->data : 0);
 }
-cp::Body* Space::addBody(cp::Body *body)
+cpBody* Space::addBody(cpBody *body)
 {
 		cpBody*  temp = cpSpaceAddBody(space,body ? body->get() : 0);
-		return static_cast<cp::Body* >(temp ? temp->data : 0);
+		return static_cast<cpBody* >(temp ? temp->data : 0);
 }
-cp::Constraint* Space::addConstraint(cp::Constraint *constraint)
+cpConstraint* Space::addConstraint(cpConstraint *constraint)
 {
-		cpConstraint*  temp = cpSpaceAddConstraint(space,constraint ? constraint->get() : 0);
-		return static_cast<cp::Constraint* >(temp ? temp->data : 0);
+		cpConstraint*  temp = cpSpaceAddConstraint(space,constraint);
+		return static_cast<cpConstraint* >(temp ? temp->data : 0);
 }
-void Space::removeShape(cp::Shape *shape)
+void Space::removeShape(cpShape *shape)
 {
 		cpSpaceRemoveShape(space,shape ? shape->get() : 0);
 }
-void Space::removeStaticShape(cp::Shape *shape)
+void Space::removeStaticShape(cpShape *shape)
 {
 		cpSpaceRemoveStaticShape(space,shape ? shape->get() : 0);
 }
-void Space::removeBody(cp::Body *body)
+void Space::removeBody(cpBody *body)
 {
 		cpSpaceRemoveBody(space,body ? body->get() : 0);
 }
-void Space::removeConstraint(cp::Constraint *constraint)
+void Space::removeConstraint(cpConstraint *constraint)
 {
-		cpSpaceRemoveConstraint(space,constraint ? constraint->get() : 0);
+		cpSpaceRemoveConstraint(space,constraint);
 }
-cpBool Space::containsShape(cp::Shape *shape)
+cpBool Space::containsShape(cpShape *shape)
 {
 		return cpSpaceContainsShape(space,shape ? shape->get() : 0);
 }
-cpBool Space::containsBody(cp::Body *body)
+cpBool Space::containsBody(cpBody *body)
 {
 		return cpSpaceContainsBody(space,body ? body->get() : 0);
 }
-cpBool Space::containsConstraint(cp::Constraint *constraint)
+cpBool Space::containsConstraint(cpConstraint *constraint)
 {
-		return cpSpaceContainsConstraint(space,constraint ? constraint->get() : 0);
+		return cpSpaceContainsConstraint(space,constraint);
 }
 cpBool Space::addPostStepCallback(cpPostStepFunc func,void *key,void *data)
 {
@@ -132,7 +183,7 @@ cpBool Space::addPostStepCallback(PostStepFunc func,void *key)
 {
 		return cpSpaceAddPostStepCallback(space,*SpaceAddPostStepCallback,key,&func);
 }
-void Space::pointQuery(cp::Vect point,cpLayers layers,cpGroup group,cpSpacePointQueryFunc func,void *data)
+void Space::pointQuery(cpVect point,cpLayers layers,cpGroup group,cpSpacePointQueryFunc func,void *data)
 {
 		cpSpacePointQuery(space,point,layers,group,func,data);
 }
@@ -140,12 +191,12 @@ void Space::pointQuery(cpVect point,cpLayers layers,cpGroup group,SpacePointQuer
 {
 		cpSpacePointQuery(space,point,layers,group,*SpacePointQuery,&func);
 }
-cp::Shape *Space::pointQueryFirst(cp::Vect point,cpLayers layers,cpGroup group)
+cpShape *Space::pointQueryFirst(cpVect point,cpLayers layers,cpGroup group)
 {
 		cpShape * temp = cpSpacePointQueryFirst(space,point,layers,group);
-		return static_cast<cp::Shape *>(temp ? temp->data : 0);
+		return static_cast<cpShape *>(temp ? temp->data : 0);
 }
-void Space::nearestPointQuery(cp::Vect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryFunc func,void *data)
+void Space::nearestPointQuery(cpVect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryFunc func,void *data)
 {
 		cpSpaceNearestPointQuery(space,point,maxDistance,layers,group,func,data);
 }
@@ -153,12 +204,12 @@ void Space::nearestPointQuery(cpVect point,cpFloat maxDistance,cpLayers layers,c
 {
 		cpSpaceNearestPointQuery(space,point,maxDistance,layers,group,*SpaceNearestPointQuery,&func);
 }
-cp::Shape *Space::nearestPointQueryNearest(cp::Vect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpNearestPointQueryInfo *out)
+cpShape *Space::nearestPointQueryNearest(cpVect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpNearestPointQueryInfo *out)
 {
 		cpShape * temp = cpSpaceNearestPointQueryNearest(space,point,maxDistance,layers,group,out);
-		return static_cast<cp::Shape *>(temp ? temp->data : 0);
+		return static_cast<cpShape *>(temp ? temp->data : 0);
 }
-void Space::segmentQuery(cp::Vect start,cp::Vect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryFunc func,void *data)
+void Space::segmentQuery(cpVect start,cpVect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryFunc func,void *data)
 {
 		cpSpaceSegmentQuery(space,start,end,layers,group,func,data);
 }
@@ -166,12 +217,12 @@ void Space::segmentQuery(cpVect start,cpVect end,cpLayers layers,cpGroup group,S
 {
 		cpSpaceSegmentQuery(space,start,end,layers,group,*SpaceSegmentQuery,&func);
 }
-cp::Shape *Space::segmentQueryFirst(cp::Vect start,cp::Vect end,cpLayers layers,cpGroup group,cpSegmentQueryInfo *out)
+cpShape *Space::segmentQueryFirst(cpVect start,cpVect end,cpLayers layers,cpGroup group,cpSegmentQueryInfo *out)
 {
 		cpShape * temp = cpSpaceSegmentQueryFirst(space,start,end,layers,group,out);
-		return static_cast<cp::Shape *>(temp ? temp->data : 0);
+		return static_cast<cpShape *>(temp ? temp->data : 0);
 }
-void Space::BBQuery(cp::BB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryFunc func,void *data)
+void Space::BBQuery(cpBB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryFunc func,void *data)
 {
 		cpSpaceBBQuery(space,bb,layers,group,func,data);
 }
@@ -179,7 +230,7 @@ void Space::BBQuery(cpBB bb,cpLayers layers,cpGroup group,SpaceBBQueryFunc func)
 {
 		cpSpaceBBQuery(space,bb,layers,group,*SpaceBBQuery,&func);
 }
-cpBool Space::shapeQuery(cp::Shape *shape,cpSpaceShapeQueryFunc func,void *data)
+cpBool Space::shapeQuery(cpShape *shape,cpSpaceShapeQueryFunc func,void *data)
 {
 		return cpSpaceShapeQuery(space,shape ? shape->get() : 0,func,data);
 }
@@ -187,7 +238,7 @@ cpBool Space::shapeQuery(cpShape *shape,SpaceShapeQueryFunc func)
 {
 		return cpSpaceShapeQuery(space,shape,*SpaceShapeQuery,&func);
 }
-void Space::activateShapesTouchingShape(cp::Shape *shape)
+void Space::activateShapesTouchingShape(cpShape *shape)
 {
 		cpSpaceActivateShapesTouchingShape(space,shape ? shape->get() : 0);
 }
@@ -219,11 +270,11 @@ void Space::reindexStatic()
 {
 		cpSpaceReindexStatic(space);
 }
-void Space::reindexShape(cp::Shape *shape)
+void Space::reindexShape(cpShape *shape)
 {
 		cpSpaceReindexShape(space,shape ? shape->get() : 0);
 }
-void Space::reindexShapesForBody(cp::Body *body)
+void Space::reindexShapesForBody(cpBody *body)
 {
 		cpSpaceReindexShapesForBody(space,body ? body->get() : 0);
 }
@@ -333,33 +384,33 @@ Space::Space(cpSpace* v)
 }
 };//namespace cp
 namespace {
-	cpBool internal_CollisionBeginFunc (cpArbiter *arb,cpSpace *space,void *data)
+	cpBool internal_cpCollisionBeginFunc (cpArbiter *arb,cpSpace *space,void *data)
 	{
 		cp::CollisionHandler* handler = static_cast<cp::CollisionHandler*>(data);
 		cp::Arbiter tempArbiter(arb);
 		data = handler->data;
-		return (handler->begin)(&tempArbiter,static_cast<cp::Space *>(space->data),data);
+		return (handler->begin)(&tempArbiter,static_cast<cpSpace *>(space->data),data);
 	}
-	cpBool internal_CollisionPreSolveFunc (cpArbiter *arb,cpSpace *space,void *data)
+	cpBool internal_cpCollisionPreSolveFunc (cpArbiter *arb,cpSpace *space,void *data)
 	{
 		cp::CollisionHandler* handler = static_cast<cp::CollisionHandler*>(data);
 		cp::Arbiter tempArbiter(arb);
 		data = handler->data;
-		return (handler->preSolve)(&tempArbiter,static_cast<cp::Space *>(space->data),data);
+		return (handler->preSolve)(&tempArbiter,static_cast<cpSpace *>(space->data),data);
 	}
-	void internal_CollisionPostSolveFunc (cpArbiter *arb,cpSpace *space,void *data)
+	void internal_cpCollisionPostSolveFunc (cpArbiter *arb,cpSpace *space,void *data)
 	{
 		cp::CollisionHandler* handler = static_cast<cp::CollisionHandler*>(data);
 		cp::Arbiter tempArbiter(arb);
 		data = handler->data;
-		return (handler->postSolve)(&tempArbiter,static_cast<cp::Space *>(space->data),data);
+		return (handler->postSolve)(&tempArbiter,static_cast<cpSpace *>(space->data),data);
 	}
-	void internal_CollisionSeparateFunc (cpArbiter *arb,cpSpace *space,void *data)
+	void internal_cpCollisionSeparateFunc (cpArbiter *arb,cpSpace *space,void *data)
 	{
 		cp::CollisionHandler* handler = static_cast<cp::CollisionHandler*>(data);
 		cp::Arbiter tempArbiter(arb);
 		data = handler->data;
-		return (handler->separate)(&tempArbiter,static_cast<cp::Space *>(space->data),data);
+		return (handler->separate)(&tempArbiter,static_cast<cpSpace *>(space->data),data);
 	}
 	void SpaceAddPostStepCallback(cpSpace *space,void *obj,void *data)
 	{
@@ -373,12 +424,12 @@ namespace {
 
 	void SpaceNearestPointQuery(cpShape *shape,cpFloat distance,cpVect point,void *data)
 	{
-				(*reinterpret_cast<std::function<void (cp::Shape *,cpFloat ,cp::Vect )> *>(data))((cp::Shape *)shape->data,distance,point);
+				(*reinterpret_cast<std::function<void (cp::Shape *,cpFloat ,cpVect )> *>(data))((cp::Shape *)shape->data,distance,point);
 	}
 
 	void SpaceSegmentQuery(cpShape *shape,cpFloat t,cpVect n,void *data)
 	{
-				(*reinterpret_cast<std::function<void (cp::Shape *,cpFloat ,cp::Vect )> *>(data))((cp::Shape *)shape->data,t,n);
+				(*reinterpret_cast<std::function<void (cp::Shape *,cpFloat ,cpVect )> *>(data))((cp::Shape *)shape->data,t,n);
 	}
 
 	void SpaceBBQuery(cpShape *shape,void *data)
@@ -403,7 +454,7 @@ namespace {
 
 	void SpaceEachConstraint(cpConstraint *constraint,void *data)
 	{
-				(*reinterpret_cast<std::function<void (cp::Constraint *)> *>(data))((cp::Constraint *)constraint->data);
+				(*reinterpret_cast<std::function<void (cpConstraint *)> *>(data))(constraint);
 	}
 
 }

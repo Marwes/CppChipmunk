@@ -1,15 +1,14 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #include "Body.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
-#include "Arbiter.hpp"
-#include "Constraint.hpp"
-#include <functional>
 #include "Space.hpp"
+#include "Arbiter.hpp"
+#include <functional>
 #include "Vect.hpp"
 #include "Shape.hpp"
 #include "Body.hpp"
@@ -23,9 +22,17 @@ namespace {
 
 namespace cp {
 
-cpBody* Body::get()
+void Body::addShape(cpShape *shape)
 {
-		return body;
+		cpBodyAddShape(body,shape ? shape->get() : 0);
+}
+void Body::removeShape(cpShape *shape)
+{
+		cpBodyRemoveShape(body,shape ? shape->get() : 0);
+}
+void Body::removeConstraint(cpConstraint *constraint)
+{
+		cpBodyRemoveConstraint(body,constraint);
 }
 Body::Body(cpFloat m,cpFloat i)
 	: body(cpBodyNew(m,i)),
@@ -47,7 +54,7 @@ void Body::activate()
 {
 		cpBodyActivate(body);
 }
-void Body::activateStatic(cp::Shape *filter)
+void Body::activateStatic(cpShape *filter)
 {
 		cpBodyActivateStatic(body,filter ? filter->get() : 0);
 }
@@ -55,7 +62,7 @@ void Body::sleep()
 {
 		cpBodySleep(body);
 }
-void Body::sleepWithGroup(cp::Body *group)
+void Body::sleepWithGroup(cpBody *group)
 {
 		cpBodySleepWithGroup(body,group ? group->get() : 0);
 }
@@ -79,7 +86,7 @@ void Body::setMoment(cpFloat i)
 {
 		cpBodySetMoment(body,i);
 }
-void Body::setPos(cp::Vect pos)
+void Body::setPos(cpVect pos)
 {
 		cpBodySetPos(body,pos);
 }
@@ -87,7 +94,7 @@ void Body::setAngle(cpFloat a)
 {
 		cpBodySetAngle(body,a);
 }
-void Body::updateVelocity(cp::Vect gravity,cpFloat damping,cpFloat dt)
+void Body::updateVelocity(cpVect gravity,cpFloat damping,cpFloat dt)
 {
 		cpBodyUpdateVelocity(body,gravity,damping,dt);
 }
@@ -95,11 +102,11 @@ void Body::updatePosition(cpFloat dt)
 {
 		cpBodyUpdatePosition(body,dt);
 }
-cp::Vect Body::local2World(const cpVect v)
+cpVect Body::local2World(const cpVect v)
 {
 		return cpBodyLocal2World(body,v);
 }
-cp::Vect Body::world2Local(const cpVect v)
+cpVect Body::world2Local(const cpVect v)
 {
 		return cpBodyWorld2Local(body,v);
 }
@@ -115,11 +122,11 @@ void Body::applyImpulse(const cpVect j,const cpVect r)
 {
 		cpBodyApplyImpulse(body,j,r);
 }
-cp::Vect Body::getVelAtWorldPoint(cp::Vect point)
+cpVect Body::getVelAtWorldPoint(cpVect point)
 {
 		return cpBodyGetVelAtWorldPoint(body,point);
 }
-cp::Vect Body::getVelAtLocalPoint(cp::Vect point)
+cpVect Body::getVelAtLocalPoint(cpVect point)
 {
 		return cpBodyGetVelAtLocalPoint(body,point);
 }
@@ -248,7 +255,7 @@ namespace {
 
 	void BodyEachConstraint(cpBody *body,cpConstraint *constraint,void *data)
 	{
-				(*reinterpret_cast<std::function<void (cp::Body *,cp::Constraint *)> *>(data))((cp::Body *)body->data,(cp::Constraint *)constraint->data);
+				(*reinterpret_cast<std::function<void (cp::Body *,cpConstraint *)> *>(data))((cp::Body *)body->data,constraint);
 	}
 
 	void BodyEachArbiter(cpBody *body,cpArbiter *arbiter,void *data)

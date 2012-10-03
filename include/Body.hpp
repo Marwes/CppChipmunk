@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
  */
 #pragma once
 
@@ -13,7 +13,7 @@ namespace cp {
 /// Body/shape iterator callback function type. 
 	typedef std::function<void (cp::Body *,cp::Shape *)> BodyShapeIteratorFunc ;
 /// Body/constraint iterator callback function type. 
-	typedef std::function<void (cp::Body *,cp::Constraint *)> BodyConstraintIteratorFunc ;
+	typedef std::function<void (cp::Body *,cpConstraint *)> BodyConstraintIteratorFunc ;
 /// Body/arbiter iterator callback function type. 
 	typedef std::function<void (cp::Body *,cp::Arbiter *)> BodyArbiterIteratorFunc ;
 
@@ -24,7 +24,12 @@ protected:
 	friend class  cp::Space;
 ;
 public:
-	cpBody* get();
+	cpBody* get(){
+		return body;
+}
+	void addShape(cpShape *shape);
+	void removeShape(cpShape *shape);
+	void removeConstraint(cpConstraint *constraint);
 /// Allocate and initialize a cpBody.
 	Body(cpFloat m,cpFloat i);
 /// Allocate and initialize a static cpBody.
@@ -35,11 +40,11 @@ public:
 /// Wake up a sleeping or idle body.
 	void activate();
 /// Wake up any sleeping or idle bodies touching a static body.
-	void activateStatic(cp::Shape *filter);
+	void activateStatic(cpShape *filter);
 /// Force a body to fall asleep immediately.
 	void sleep();
 /// Force a body to fall asleep immediately along with other bodies in a group.
-	void sleepWithGroup(cp::Body *group);
+	void sleepWithGroup(cpBody *group);
 /// Returns true if the body is sleeping.
 	cpBool isSleeping();
 /// Returns true if the body is static.
@@ -51,16 +56,16 @@ public:
 /// Set the moment of a body.
 	void setMoment(cpFloat i);
 /// Set the position of a body.
-	void setPos(cp::Vect pos);
+	void setPos(cpVect pos);
 /// Set the angle of a body.
 	void setAngle(cpFloat a);
 /// Default Integration functions.
-	void updateVelocity(cp::Vect gravity,cpFloat damping,cpFloat dt);
+	void updateVelocity(cpVect gravity,cpFloat damping,cpFloat dt);
 	void updatePosition(cpFloat dt);
 /// Convert body relative/local coordinates to absolute/world coordinates.
-	cp::Vect local2World(const cpVect v);
+	cpVect local2World(const cpVect v);
 /// Convert body absolute/world coordinates to  relative/local coordinates.
-	cp::Vect world2Local(const cpVect v);
+	cpVect world2Local(const cpVect v);
 /// Set the forces and torque or a body to zero.
 	void resetForces();
 /// Apply an force (in world coordinates) to the body at a point relative to the center of gravity (also in world coordinates).
@@ -68,9 +73,9 @@ public:
 /// Apply an impulse (in world coordinates) to the body at a point relative to the center of gravity (also in world coordinates).
 	void applyImpulse(const cpVect j,const cpVect r);
 /// Get the velocity on a body (in world units) at a point on the body in world coordinates.
-	cp::Vect getVelAtWorldPoint(cp::Vect point);
+	cpVect getVelAtWorldPoint(cpVect point);
 /// Get the velocity on a body (in world units) at a point on the body in local coordinates.
-	cp::Vect getVelAtLocalPoint(cp::Vect point);
+	cpVect getVelAtLocalPoint(cpVect point);
 /// Get the kinetic energy of a body.
 	cpFloat kineticEnergy();
 	void eachShape(cpBodyShapeIteratorFunc func,void *data);

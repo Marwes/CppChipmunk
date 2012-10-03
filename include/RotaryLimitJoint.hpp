@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
+ * Chipmunk binding for C++ automatically generated on 10/03/12 18:53:20.
  */
 #pragma once
 
@@ -15,7 +15,9 @@ class RotaryLimitJoint : public Constraint {
 protected:
 	cpRotaryLimitJoint* rotarylimitjoint;
 public:
-	cpRotaryLimitJoint* get();
+	cpRotaryLimitJoint* get(){
+		return rotarylimitjoint;
+}
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a damped rotary limit joint.
 	RotaryLimitJoint(cp::Body *a,cp::Body *b,cpFloat min,cpFloat max);
