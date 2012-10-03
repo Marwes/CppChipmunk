@@ -44,6 +44,115 @@ local functionHooks = {
 		end
 	end
 	,
+	function ( returnType, functionName, argTable  )
+		if functionName == "cpSpaceRemoveCollisionHandler" then
+			local methodName, struct = getMethod(functionName)
+			local class = classes[struct]
+			table.insert(class.members, {
+				type="std::unordered_map<std::pair<cpCollisionType, cpCollisionType>,CollisionHandler, HashFunctor> ",
+				name="collisionHandlers;"
+			})
+			table.insert(class.includes, "#include <unordered_map>\n")
+
+			local body = "collisionHandlers.erase(std::make_pair(a, b));\n"
+			body = body..functionName.."("..makeArguments(argTable)..");\n"
+			table.remove(argTable, 1)
+			return 	Method:new({
+				returnType="void ",
+				name="removeCollisionHandler",
+				body=body,
+				parameters=argTable
+				}
+				),
+				struct
+		end
+	end
+	,
+	function ( returnType, functionName, argTable )
+		if functionName == "cpSpaceAddCollisionHandler" then
+
+			local methodName, struct = getMethod(functionName)
+			local class = classes[struct]
+			classes.cpSpace.additionalText =classes.cpSpace.additionalText..
+[[	struct CollisionHandler {
+		std::function<cpBool (cp::Arbiter *arb, cp::Space *space, void *data)> begin;
+		std::function<cpBool (cp::Arbiter *arb, cp::Space *space, void *data)> preSolve;
+		std::function<void (cp::Arbiter *arb, cp::Space *space, void *data)> postSolve;
+		std::function<void (cp::Arbiter *arb, cp::Space *space, void *data)> separate;
+		cpDataPointer data;
+	};
+
+	struct HashFunctor {
+		size_t operator()(const std::pair<cpCollisionType, cpCollisionType> p) const
+		{
+			return (size_t)(p.first)*3344921057ul ^ (size_t)(p.second)*3344921057ul;
+		}
+	};
+]]
+			local functionArgs = copyTable(argTable)
+			local body = 
+			[[CollisionHandler& handler = collisionHandlers[std::make_pair(a,b)];
+			handler.begin = begin;
+			handler.preSolve = preSolve;
+			handler.postSolve = postSolve;
+			handler.separate = separate;
+			handler.data = data;
+			cpSpaceAddCollisionHandler(]]
+
+			for k,v in ipairs(functionArgs) do 
+				local cpTypedef = functionTypedefs[v.type:gsub("%s*", "")]
+				if cpTypedef then
+					local stdFunc = makeStdFunction(cpTypedef.returnType, cpTypedef.args)
+					local typedefName = toClass(v.type):gsub(getNamespace(), "")
+					class.additionalText = class.additionalText.."\ttypedef "..stdFunc..typedefName..";\n"
+
+					v.type = typedefName
+					local returnIfNotVoid = cpTypedef.returnType:gsub("%s+", "") == "void" and "" or "return"
+					body = body.."!"..v.name.." ?  0 : internal_"..typedefName..", "
+					local fun = "\t"..cpTypedef.returnType.."internal_"..typedefName.."("..makeRawParameters(cpTypedef.args)..")"
+					class.anonymousDeclarations = class.anonymousDeclarations..fun..";\n"
+					fun = fun.."\n\t{\n"
+					fun = fun.."\t\t"..getNamespace().."CollisionHandler* handler = static_cast<"..getNamespace().."CollisionHandler*>(data);\n"
+					local anonArgs = copyTable(cpTypedef.args)
+					for _, arg in ipairs(anonArgs) do
+						if arg.type:find("cpArbiter") then
+							fun = fun.."\t\t"..getNamespace().."Arbiter tempArbiter("..arg.name..");\n"
+							arg.name = "&tempArbiter"
+						elseif arg.name ~= "data" then
+							arg.name = "static_cast<"..toClass(arg.type)..">("..arg.name.."->data)"
+						end
+					end
+					local returnTrueOrVoid = cpTypedef.returnType == "void " and "" or " true"
+					fun = fun.."\t\tdata = handler->data;\n"
+					fun = fun.."\t\treturn (handler->"..v.name..")("..makeRawArguments(anonArgs)..");\n"
+					fun = fun.."\t}\n"
+					class.anonymousDefinitions = 
+					class.anonymousDefinitions..fun
+
+					v.default = typedefName.."()"
+					v.type = "const "..v.type.."& "
+				else
+					body = body..v.name..", "
+					if v.name == "data" then v.default = 0 end
+				end
+			end
+			body = body:sub(1, #body - #" data,").." &handler);\n"
+
+			--remove the first paramter
+			table.remove(functionArgs, 1)
+			toCppTypes(functionArgs)
+			class:addMethod(Method:new({
+				returnType="void ",
+				name="addCollisionHandler",
+				body=body,
+				parameters=functionArgs
+				}
+				))
+			--Fall through to declare the normal method as well
+			return
+		end
+	end
+	,
 	function ( returnType, functionName, argTable  ) --Hacked in until I know how to deal with this constructor
 		if functionName == "cpPolyShapeNew" then
 			local _, struct = getMethod(functionName)
@@ -476,14 +585,15 @@ end
 
 --Compares the text with what is already there to determine if we need to update it
 function writeFile( filename, text )
-	text = timestamp..text
 	local f = io.open(filename)
 	local previousText = nil
 	if f then
 		previousText = f:read("*all")
+		previousText = previousText:gsub("/*.+*/\n", "")
 		f:close()
 	end
 	if previousText ~= text then
+		text = timestamp..text
 		local f = assert(io.open(filename, "w"))
 		f:write(text)
 		f:close()
@@ -732,7 +842,7 @@ end
 
 function Class:addIncludesFrom( text )
 	for k,v in pairs(classes) do 
-		if text:find(namespace.."::"..v.name) then
+		if text:find(namespace.."::"..v.name) and v.hasMethods then
 			self.includes[v.name] = "#include \""..v.name..".hpp\"\n"
 		end
 	end

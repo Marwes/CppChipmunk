@@ -1,7 +1,7 @@
-/* 
+/*
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/15/12 09:55:02.
+ * Chipmunk binding for C++ automatically generated on 09/19/12 19:04:14.
  */
 #include "Vect.hpp"
 #include "chipmunk.h"

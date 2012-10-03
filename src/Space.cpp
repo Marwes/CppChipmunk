@@ -1,12 +1,14 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/15/12 09:55:02.
+ * Chipmunk binding for C++ automatically generated on 09/19/12 19:27:37.
  */
 #include "Space.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
+#include <unordered_map>
 #include "Space.hpp"
+#include "Arbiter.hpp"
 #include "BB.hpp"
 #include "Shape.hpp"
 #include <functional>
@@ -16,6 +18,10 @@
 
 class Space;
 namespace {
+	cpBool internal_CollisionBeginFunc (cpArbiter *arb,cpSpace *space,void *data);
+	cpBool internal_CollisionPreSolveFunc (cpArbiter *arb,cpSpace *space,void *data);
+	void internal_CollisionPostSolveFunc (cpArbiter *arb,cpSpace *space,void *data);
+	void internal_CollisionSeparateFunc (cpArbiter *arb,cpSpace *space,void *data);
 	void SpaceAddPostStepCallback(cpSpace *space,void *obj,void *data);
 	void SpacePointQuery(cpShape *shape,void *data);
 	void SpaceNearestPointQuery(cpShape *shape,cpFloat distance,cpVect point,void *data);
@@ -51,13 +57,24 @@ void Space::setDefaultCollisionHandler(cpCollisionBeginFunc begin,cpCollisionPre
 {
 		cpSpaceSetDefaultCollisionHandler(space,begin,preSolve,postSolve,separate,data);
 }
+void Space::addCollisionHandler(cpCollisionType a,cpCollisionType b,const CollisionBeginFunc & begin,const CollisionPreSolveFunc & preSolve,const CollisionPostSolveFunc & postSolve,const CollisionSeparateFunc & separate,void *data)
+{
+		CollisionHandler& handler = collisionHandlers[std::make_pair(a,b)];
+			handler.begin = begin;
+			handler.preSolve = preSolve;
+			handler.postSolve = postSolve;
+			handler.separate = separate;
+			handler.data = data;
+			cpSpaceAddCollisionHandler(space, a, b, !begin ?  0 : internal_CollisionBeginFunc , !preSolve ?  0 : internal_CollisionPreSolveFunc , !postSolve ?  0 : internal_CollisionPostSolveFunc , !separate ?  0 : internal_CollisionSeparateFunc ,  &handler);
+}
 void Space::addCollisionHandler(cpCollisionType a,cpCollisionType b,cpCollisionBeginFunc begin,cpCollisionPreSolveFunc preSolve,cpCollisionPostSolveFunc postSolve,cpCollisionSeparateFunc separate,void *data)
 {
 		cpSpaceAddCollisionHandler(space,a,b,begin,preSolve,postSolve,separate,data);
 }
 void Space::removeCollisionHandler(cpCollisionType a,cpCollisionType b)
 {
-		cpSpaceRemoveCollisionHandler(space,a,b);
+		collisionHandlers.erase(std::make_pair(a, b));
+cpSpaceRemoveCollisionHandler(get(),a,b);
 }
 cp::Shape* Space::addShape(cp::Shape *shape)
 {
@@ -316,6 +333,34 @@ Space::Space(cpSpace* v)
 }
 };//namespace cp
 namespace {
+	cpBool internal_CollisionBeginFunc (cpArbiter *arb,cpSpace *space,void *data)
+	{
+		cp::CollisionHandler* handler = static_cast<cp::CollisionHandler*>(data);
+		cp::Arbiter tempArbiter(arb);
+		data = handler->data;
+		return (handler->begin)(&tempArbiter,static_cast<cp::Space *>(space->data),data);
+	}
+	cpBool internal_CollisionPreSolveFunc (cpArbiter *arb,cpSpace *space,void *data)
+	{
+		cp::CollisionHandler* handler = static_cast<cp::CollisionHandler*>(data);
+		cp::Arbiter tempArbiter(arb);
+		data = handler->data;
+		return (handler->preSolve)(&tempArbiter,static_cast<cp::Space *>(space->data),data);
+	}
+	void internal_CollisionPostSolveFunc (cpArbiter *arb,cpSpace *space,void *data)
+	{
+		cp::CollisionHandler* handler = static_cast<cp::CollisionHandler*>(data);
+		cp::Arbiter tempArbiter(arb);
+		data = handler->data;
+		return (handler->postSolve)(&tempArbiter,static_cast<cp::Space *>(space->data),data);
+	}
+	void internal_CollisionSeparateFunc (cpArbiter *arb,cpSpace *space,void *data)
+	{
+		cp::CollisionHandler* handler = static_cast<cp::CollisionHandler*>(data);
+		cp::Arbiter tempArbiter(arb);
+		data = handler->data;
+		return (handler->separate)(&tempArbiter,static_cast<cp::Space *>(space->data),data);
+	}
 	void SpaceAddPostStepCallback(cpSpace *space,void *obj,void *data)
 	{
 				(*reinterpret_cast<std::function<void (cp::Space *,void *)> *>(data))((cp::Space *)space->data,obj);

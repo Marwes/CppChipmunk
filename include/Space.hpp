@@ -1,15 +1,34 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/15/12 09:55:02.
+ * Chipmunk binding for C++ automatically generated on 09/19/12 19:28:56.
  */
 #pragma once
 
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
+#include <unordered_map>
 #include <functional>
 
 namespace cp {
+	struct CollisionHandler {
+		std::function<cpBool (cp::Arbiter *arb, cp::Space *space, void *data)> begin;
+		std::function<cpBool (cp::Arbiter *arb, cp::Space *space, void *data)> preSolve;
+		std::function<void (cp::Arbiter *arb, cp::Space *space, void *data)> postSolve;
+		std::function<void (cp::Arbiter *arb, cp::Space *space, void *data)> separate;
+		cpDataPointer data;
+	};
+
+	struct HashFunctor {
+		size_t operator()(const std::pair<cpCollisionType, cpCollisionType> p) const
+		{
+			return (size_t)(p.first)*3344921057ul ^ (size_t)(p.second)*3344921057ul;
+		}
+	};
+	typedef std::function<cpBool (cp::Arbiter *,cp::Space *,void *)> CollisionBeginFunc ;
+	typedef std::function<cpBool (cp::Arbiter *,cp::Space *,void *)> CollisionPreSolveFunc ;
+	typedef std::function<void (cp::Arbiter *,cp::Space *,void *)> CollisionPostSolveFunc ;
+	typedef std::function<void (cp::Arbiter *,cp::Space *,void *)> CollisionSeparateFunc ;
 /// Post Step callback function type.
 	typedef std::function<void (cp::Space *,void *)> PostStepFunc ;
 /// Point query callback function type.
@@ -34,6 +53,7 @@ protected:
 	cpSpace* space;
 	cpDataPointer data;
 	cp::Body* body;
+	std::unordered_map<std::pair<cpCollisionType, cpCollisionType>,CollisionHandler, HashFunctor>  collisionHandlers;;
 public:
 	cpSpace* get();
 /// Allocate and initialize a cpSpace.
@@ -45,6 +65,7 @@ public:
 /// that isn't explicitly handled by a specific collision handler.
 /// You can pass NULL for any function you don't want to implement.
 	void setDefaultCollisionHandler(cpCollisionBeginFunc begin,cpCollisionPreSolveFunc preSolve,cpCollisionPostSolveFunc postSolve,cpCollisionSeparateFunc separate,void *data);
+	void addCollisionHandler(cpCollisionType a,cpCollisionType b,const CollisionBeginFunc & begin = CollisionBeginFunc (),const CollisionPreSolveFunc & preSolve = CollisionPreSolveFunc (),const CollisionPostSolveFunc & postSolve = CollisionPostSolveFunc (),const CollisionSeparateFunc & separate = CollisionSeparateFunc (),void *data = 0);
 /// Set a collision handler to be used whenever the two shapes with the given collision types collide.
 /// You can pass NULL for any function you don't want to implement.
 	void addCollisionHandler(cpCollisionType a,cpCollisionType b,cpCollisionBeginFunc begin,cpCollisionPreSolveFunc preSolve,cpCollisionPostSolveFunc postSolve,cpCollisionSeparateFunc separate,void *data);

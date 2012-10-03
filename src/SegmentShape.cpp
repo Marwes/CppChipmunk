@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 09/15/12 09:55:02.
+ * Chipmunk binding for C++ automatically generated on 09/19/12 14:10:01.
  */
 #include "SegmentShape.hpp"
 #include "chipmunk.h"
