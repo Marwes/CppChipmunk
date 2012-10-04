@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,12 +15,12 @@ class SimpleMotor : public Constraint {
 protected:
 	cpSimpleMotor* simplemotor;
 public:
-	cpSimpleMotor* get(){
+	inline cpSimpleMotor* get(){
 		return simplemotor;
 }
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a simple motor.
-	SimpleMotor(cpBody *a,cpBody *b,cpFloat rate);
+	SimpleMotor(cp::Body *a,cp::Body *b,cpFloat rate);
 	cpFloat getRate(void);
 	void setRate(cpFloat value);
 

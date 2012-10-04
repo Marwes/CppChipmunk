@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -25,10 +25,10 @@ namespace cp {
 			return (size_t)(p.first)*3344921057ul ^ (size_t)(p.second)*3344921057ul;
 		}
 	};
-	typedef std::function<cpBool (cp::Arbiter *,cp::Space *,void *)> cpCollisionBeginFunc ;
-	typedef std::function<cpBool (cp::Arbiter *,cp::Space *,void *)> cpCollisionPreSolveFunc ;
-	typedef std::function<void (cp::Arbiter *,cp::Space *,void *)> cpCollisionPostSolveFunc ;
-	typedef std::function<void (cp::Arbiter *,cp::Space *,void *)> cpCollisionSeparateFunc ;
+	typedef std::function<cpBool (cp::Arbiter *,cp::Space *,void *)> CollisionBeginFunc ;
+	typedef std::function<cpBool (cp::Arbiter *,cp::Space *,void *)> CollisionPreSolveFunc ;
+	typedef std::function<void (cp::Arbiter *,cp::Space *,void *)> CollisionPostSolveFunc ;
+	typedef std::function<void (cp::Arbiter *,cp::Space *,void *)> CollisionSeparateFunc ;
 /// Post Step callback function type.
 	typedef std::function<void (cp::Space *,void *)> PostStepFunc ;
 /// Point query callback function type.
@@ -55,13 +55,9 @@ protected:
 	cp::Body* body;
 	std::unordered_map<std::pair<cpCollisionType, cpCollisionType>,CollisionHandler, HashFunctor>  collisionHandlers;;
 public:
-	cpSpace* get(){
+	inline cpSpace* get(){
 		return space;
 }
-	void nearestPointQuery_b(cpVect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryBlock block);
-	void segmentQuery_b(cpVect start,cpVect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryBlock block);
-	void BBQuery_b(cpBB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryBlock block);
-	cpBool shapeQuery_b(cpShape *shape,cpSpaceShapeQueryBlock block);
 /// Allocate and initialize a cpSpace.
 	Space(void);
 /// Destroy and free a cpSpace.
@@ -71,7 +67,7 @@ public:
 /// that isn't explicitly handled by a specific collision handler.
 /// You can pass NULL for any function you don't want to implement.
 	void setDefaultCollisionHandler(cpCollisionBeginFunc begin,cpCollisionPreSolveFunc preSolve,cpCollisionPostSolveFunc postSolve,cpCollisionSeparateFunc separate,void *data);
-	void addCollisionHandler(cpCollisionType a,cpCollisionType b,const cpCollisionBeginFunc & begin = cpCollisionBeginFunc (),const cpCollisionPreSolveFunc & preSolve = cpCollisionPreSolveFunc (),const cpCollisionPostSolveFunc & postSolve = cpCollisionPostSolveFunc (),const cpCollisionSeparateFunc & separate = cpCollisionSeparateFunc (),void *data = 0);
+	void addCollisionHandler(cpCollisionType a,cpCollisionType b,const CollisionBeginFunc & begin = CollisionBeginFunc (),const CollisionPreSolveFunc & preSolve = CollisionPreSolveFunc (),const CollisionPostSolveFunc & postSolve = CollisionPostSolveFunc (),const CollisionSeparateFunc & separate = CollisionSeparateFunc (),void *data = 0);
 /// Set a collision handler to be used whenever the two shapes with the given collision types collide.
 /// You can pass NULL for any function you don't want to implement.
 	void addCollisionHandler(cpCollisionType a,cpCollisionType b,cpCollisionBeginFunc begin,cpCollisionPreSolveFunc preSolve,cpCollisionPostSolveFunc postSolve,cpCollisionSeparateFunc separate,void *data);
@@ -79,57 +75,57 @@ public:
 	void removeCollisionHandler(cpCollisionType a,cpCollisionType b);
 /// Add a collision shape to the simulation.
 /// If the shape is attached to a static body, it will be added as a static shape.
-	cpShape* addShape(cpShape *shape);
+	cp::Shape* addShape(cp::Shape *shape);
 /// Explicity add a shape as a static shape to the simulation.
-	cpShape* addStaticShape(cpShape *shape);
+	cp::Shape* addStaticShape(cp::Shape *shape);
 /// Add a rigid body to the simulation.
-	cpBody* addBody(cpBody *body);
+	cp::Body* addBody(cp::Body *body);
 /// Add a constraint to the simulation.
-	cpConstraint* addConstraint(cpConstraint *constraint);
+	cp::Constraint* addConstraint(cp::Constraint *constraint);
 /// Remove a collision shape from the simulation.
-	void removeShape(cpShape *shape);
+	void removeShape(cp::Shape *shape);
 /// Remove a collision shape added using cpSpaceAddStaticShape() from the simulation.
-	void removeStaticShape(cpShape *shape);
+	void removeStaticShape(cp::Shape *shape);
 /// Remove a rigid body from the simulation.
-	void removeBody(cpBody *body);
+	void removeBody(cp::Body *body);
 /// Remove a constraint from the simulation.
-	void removeConstraint(cpConstraint *constraint);
+	void removeConstraint(cp::Constraint *constraint);
 /// Test if a collision shape has been added to the space.
-	cpBool containsShape(cpShape *shape);
+	cpBool containsShape(cp::Shape *shape);
 /// Test if a rigid body has been added to the space.
-	cpBool containsBody(cpBody *body);
+	cpBool containsBody(cp::Body *body);
 /// Test if a constraint has been added to the space.
-	cpBool containsConstraint(cpConstraint *constraint);
+	cpBool containsConstraint(cp::Constraint *constraint);
 	cpBool addPostStepCallback(cpPostStepFunc func,void *key,void *data);
 /// Schedule a post-step callback to be called when cpSpaceStep() finishes.
 /// You can only register one callback per unique value for @c key.
 /// Returns true only if @c key has never been scheduled before.
 /// It's possible to pass @c NULL for @c func if you only want to mark @c key as being used.
 	cpBool addPostStepCallback(PostStepFunc func,void *key);
-	void pointQuery(cpVect point,cpLayers layers,cpGroup group,cpSpacePointQueryFunc func,void *data);
+	void pointQuery(cp::Vect point,cpLayers layers,cpGroup group,cpSpacePointQueryFunc func,void *data);
 /// Query the space at a point and call @c func for each shape found.
 	void pointQuery(cpVect point,cpLayers layers,cpGroup group,SpacePointQueryFunc func);
 /// Query the space at a point and return the first shape found. Returns NULL if no shapes were found.
-	cpShape *pointQueryFirst(cpVect point,cpLayers layers,cpGroup group);
-	void nearestPointQuery(cpVect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryFunc func,void *data);
+	cp::Shape *pointQueryFirst(cp::Vect point,cpLayers layers,cpGroup group);
+	void nearestPointQuery(cp::Vect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryFunc func,void *data);
 /// Query the space at a point and call @c func for each shape found.
 	void nearestPointQuery(cpVect point,cpFloat maxDistance,cpLayers layers,cpGroup group,SpaceNearestPointQueryFunc func);
 /// Query the space at a point and return the nearest shape found. Returns NULL if no shapes were found.
-	cpShape *nearestPointQueryNearest(cpVect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpNearestPointQueryInfo *out);
-	void segmentQuery(cpVect start,cpVect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryFunc func,void *data);
+	cp::Shape *nearestPointQueryNearest(cp::Vect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpNearestPointQueryInfo *out);
+	void segmentQuery(cp::Vect start,cp::Vect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryFunc func,void *data);
 /// Perform a directed line segment query (like a raycast) against the space calling @c func for each shape intersected.
 	void segmentQuery(cpVect start,cpVect end,cpLayers layers,cpGroup group,SpaceSegmentQueryFunc func);
 /// Perform a directed line segment query (like a raycast) against the space and return the first shape hit. Returns NULL if no shapes were hit.
-	cpShape *segmentQueryFirst(cpVect start,cpVect end,cpLayers layers,cpGroup group,cpSegmentQueryInfo *out);
-	void BBQuery(cpBB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryFunc func,void *data);
+	cp::Shape *segmentQueryFirst(cp::Vect start,cp::Vect end,cpLayers layers,cpGroup group,cpSegmentQueryInfo *out);
+	void BBQuery(cp::BB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryFunc func,void *data);
 /// Perform a fast rectangle query on the space calling @c func for each shape found.
 /// Only the shape's bounding boxes are checked for overlap, not their full shape.
 	void BBQuery(cpBB bb,cpLayers layers,cpGroup group,SpaceBBQueryFunc func);
-	cpBool shapeQuery(cpShape *shape,cpSpaceShapeQueryFunc func,void *data);
+	cpBool shapeQuery(cp::Shape *shape,cpSpaceShapeQueryFunc func,void *data);
 /// Query a space for any shapes overlapping the given shape and call @c func for each shape found.
 	cpBool shapeQuery(cpShape *shape,SpaceShapeQueryFunc func);
 /// Call cpBodyActivate() for any shape that is overlaps the given shape.
-	void activateShapesTouchingShape(cpShape *shape);
+	void activateShapesTouchingShape(cp::Shape *shape);
 	void eachBody(cpSpaceBodyIteratorFunc func,void *data);
 /// Call @c func for each body in the space.
 	void eachBody(SpaceBodyIteratorFunc func);
@@ -142,9 +138,9 @@ public:
 /// Update the collision detection info for the static shapes in the space.
 	void reindexStatic();
 /// Update the collision detection data for a specific shape in the space.
-	void reindexShape(cpShape *shape);
+	void reindexShape(cp::Shape *shape);
 /// Update the collision detection data for all shapes attached to a body.
-	void reindexShapesForBody(cpBody *body);
+	void reindexShapesForBody(cp::Body *body);
 /// Switch the space to use a spatial has as it's spatial index.
 	void useSpatialHash(cpFloat dim,int count);
 /// Step the space forward in time by @c dt.

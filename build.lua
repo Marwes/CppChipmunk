@@ -52,6 +52,7 @@ functions = {}
 function cleanText(text)
 	text = text:gsub("/%*.+%*/", "")
 	text = text:gsub("#define[^\n]+[^\\]\n", "")
+	text = text:gsub("#if defined%(__has_extension%).+#endif", "")
 	return text
 end
 
@@ -77,7 +78,7 @@ function buildTypesFromDir( dir, recursive )
 			local f = assert(io.open(dir.."/"..file))
 			local text = f:read("*all")
 			f:close()
-			buildTypes(text)
+			buildTypes(cleanText(text))
 		elseif recursive and file ~= "." and file ~= ".." and lfs.attributes(fullName, "mode") =="directory" then
 			buildTypesFromDir(fullName, recursive)
 		end
@@ -94,8 +95,7 @@ function parseTextFromDir( dir, recursive )
 			local f = assert(io.open(dir.."/"..file))
 			local text = f:read("*all")
 			f:close()
-			text = cleanText(text)
-			parseText(text)
+			parseText(cleanText(text))
 		elseif recursive and file ~= "." and file ~= ".." and lfs.attributes(fullName, "mode") =="directory" then
 			parseTextFromDir(fullName, recursive)
 		end
@@ -375,9 +375,14 @@ function toRawStruct( struct )
 end
 
 function toClass( struct )
-	if not classes[struct] then return struct end
-	if namespace == "" then return struct:sub(3) end
-	return namespace.."::"..struct:sub(3)
+	if classes[toRawStruct(struct)] or functionTypedefs[struct:gsub("%s", "")] then
+		if struct:find("^const ") then
+			return struct:gsub("^const cp", "const "..getNamespace())
+		end
+		return getNamespace()..struct:sub(3)
+	else
+		return struct
+	end
 end
 
 --Makes a parameter list from a table without any modifcations
@@ -642,6 +647,7 @@ function buildTypes( text )
 
 	matchAll(typedefPattern, text,
 		function ( b, comment, returnType, name, argTable,e)
+			print(name)
 			functionTypedefs[name] = {
 				comment=comment,
 				returnType= returnType,

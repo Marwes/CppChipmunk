@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 #include "chipmunk_declarations.hpp"
@@ -34,55 +34,55 @@
 namespace cp {
 /// Calculate the moment of inertia for a circle.
 /// @c r1 and @c r2 are the inner and outer diameters. A solid circle has an inner diameter of 0.
-	cpFloat momentForCircle(cpFloat m,cpFloat r1,cpFloat r2,cpVect offset){
+	inline cpFloat momentForCircle(cpFloat m,cpFloat r1,cpFloat r2,cp::Vect offset){
 		return cpMomentForCircle(m,r1,r2,offset);
 }
 
 /// Calculate area of a hollow circle.
 /// @c r1 and @c r2 are the inner and outer diameters. A solid circle has an inner diameter of 0.
-	cpFloat areaForCircle(cpFloat r1,cpFloat r2){
+	inline cpFloat areaForCircle(cpFloat r1,cpFloat r2){
 		return cpAreaForCircle(r1,r2);
 }
 
 /// Calculate the moment of inertia for a line segment.
 /// Beveling radius is not supported.
-	cpFloat momentForSegment(cpFloat m,cpVect a,cpVect b){
+	inline cpFloat momentForSegment(cpFloat m,cp::Vect a,cp::Vect b){
 		return cpMomentForSegment(m,a,b);
 }
 
 /// Calculate the area of a fattened (capsule shaped) line segment.
-	cpFloat areaForSegment(cpVect a,cpVect b,cpFloat r){
+	inline cpFloat areaForSegment(cp::Vect a,cp::Vect b,cpFloat r){
 		return cpAreaForSegment(a,b,r);
 }
 
 /// Calculate the moment of inertia for a solid polygon shape assuming it's center of gravity is at it's centroid. The offset is added to each vertex.
-	cpFloat momentForPoly(cpFloat m,int numVerts,const cpVect *verts,cpVect offset){
+	inline cpFloat momentForPoly(cpFloat m,int numVerts,const cp::Vect *verts,cp::Vect offset){
 		return cpMomentForPoly(m,numVerts,verts,offset);
 }
 
 /// Calculate the signed area of a polygon. A Clockwise winding gives positive area.
 /// This is probably backwards from what you expect, but matches Chipmunk's the winding for poly shapes.
-	cpFloat areaForPoly(const int numVerts,const cpVect *verts){
+	inline cpFloat areaForPoly(const int numVerts,const cp::Vect *verts){
 		return cpAreaForPoly(numVerts,verts);
 }
 
 /// Calculate the natural centroid of a polygon.
-	cpVect centroidForPoly(const int numVerts,const cpVect *verts){
+	inline cp::Vect centroidForPoly(const int numVerts,const cp::Vect *verts){
 		return cpCentroidForPoly(numVerts,verts);
 }
 
 /// Center the polygon on the origin. (Subtracts the centroid of the polygon from each vertex)
-	void recenterPoly(const int numVerts,cpVect *verts){
+	inline void recenterPoly(const int numVerts,cp::Vect *verts){
 		cpRecenterPoly(numVerts,verts);
 }
 
 /// Calculate the moment of inertia for a solid box.
-	cpFloat momentForBox(cpFloat m,cpFloat width,cpFloat height){
+	inline cpFloat momentForBox(cpFloat m,cpFloat width,cpFloat height){
 		return cpMomentForBox(m,width,height);
 }
 
 /// Calculate the moment of inertia for a solid box.
-	cpFloat momentForBox2(cpFloat m,cpBB box){
+	inline cpFloat momentForBox2(cpFloat m,cp::BB box){
 		return cpMomentForBox2(m,box);
 }
 
@@ -90,30 +90,30 @@ namespace cp {
 /// @c result must be a pointer to a @c cpVect array with at least @c count elements. If @c result is @c NULL, then @c verts will be reduced instead.
 /// @c first is an optional pointer to an integer to store where the first vertex in the hull came from (i.e. verts[first] == result[0])
 /// @c tol is the allowed amount to shrink the hull when simplifying it. A tolerance of 0.0 creates an exact hull.
-	int convexHull(int count,cpVect *verts,cpVect *result,int *first,cpFloat tol){
+	inline int convexHull(int count,cp::Vect *verts,cp::Vect *result,int *first,cpFloat tol){
 		return cpConvexHull(count,verts,result,first,tol);
 }
 
 /// Check that a set of vertexes is convex and has a clockwise winding.
 /// NOTE: Due to floating point precision issues, hulls created with cpQuickHull() are not guaranteed to validate!
-	cpBool polyValidate(const cpVect *verts,const int numVerts){
+	inline cpBool polyValidate(const cp::Vect *verts,const int numVerts){
 		return cpPolyValidate(verts,numVerts);
 }
 
 /// Get the hit point for a segment query.
-	cpVect segmentQueryHitPoint(const cpVect start,const cpVect end,const cpSegmentQueryInfo info){
+	inline cp::Vect segmentQueryHitPoint(const cp::Vect start,const cp::Vect end,const cpSegmentQueryInfo info){
 		return cpSegmentQueryHitPoint(start,end,info);
 }
 
 /// Get the hit distance for a segment query.
-	cpFloat segmentQueryHitDist(const cpVect start,const cpVect end,const cpSegmentQueryInfo info){
+	inline cpFloat segmentQueryHitDist(const cp::Vect start,const cp::Vect end,const cpSegmentQueryInfo info){
 		return cpSegmentQueryHitDist(start,end,info);
 }
 
 /// When initializing a shape, it's hash value comes from a counter.
 /// Because the hash value may affect iteration order, you can reset the shape ID counter
 /// when recreating a space. This will make the simulation be deterministic.
-	void resetShapeIdCounter(void){
+	inline void resetShapeIdCounter(void){
 		cpResetShapeIdCounter();
 }
 

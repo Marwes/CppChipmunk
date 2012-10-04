@@ -1,13 +1,14 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
  */
 #include "PivotJoint.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
 #include "Vect.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
@@ -15,12 +16,12 @@ const cpConstraintClass *PivotJoint::getClass()
 {
 		return cpPivotJointGetClass();
 }
-PivotJoint::PivotJoint(cpBody *a,cpBody *b,cpVect pivot)
+PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,cp::Vect pivot)
 	: Constraint(cpPivotJointNew(a ? a->get() : 0,b ? b->get() : 0,pivot))
 {
 		constraint->data = this;
 }
-PivotJoint::PivotJoint(cpBody *a,cpBody *b,cpVect anchr1,cpVect anchr2)
+PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2)
 	: Constraint(cpPivotJointNew2(a ? a->get() : 0,b ? b->get() : 0,anchr1,anchr2))
 {
 		constraint->data = this;

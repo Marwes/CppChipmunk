@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,12 +15,12 @@ class RatchetJoint : public Constraint {
 protected:
 	cpRatchetJoint* ratchetjoint;
 public:
-	cpRatchetJoint* get(){
+	inline cpRatchetJoint* get(){
 		return ratchetjoint;
 }
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a ratchet joint.
-	RatchetJoint(cpBody *a,cpBody *b,cpFloat phase,cpFloat ratchet);
+	RatchetJoint(cp::Body *a,cp::Body *b,cpFloat phase,cpFloat ratchet);
 	cpFloat getAngle(void);
 	void setAngle(cpFloat value);
 	cpFloat getPhase(void);

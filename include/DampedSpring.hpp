@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,12 +15,12 @@ class DampedSpring : public Constraint {
 protected:
 	cpDampedSpring* dampedspring;
 public:
-	cpDampedSpring* get(){
+	inline cpDampedSpring* get(){
 		return dampedspring;
 }
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a damped spring.
-	DampedSpring(cpBody *a,cpBody *b,cpVect anchr1,cpVect anchr2,cpFloat restLength,cpFloat stiffness,cpFloat damping);
+	DampedSpring(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2,cpFloat restLength,cpFloat stiffness,cpFloat damping);
 	cp::Vect getAnchr1(void);
 	void setAnchr1(cp::Vect value);
 	cp::Vect getAnchr2(void);

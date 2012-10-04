@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,11 +15,11 @@ class BBTree : public SpatialIndex {
 protected:
 	cpBBTree* bbtree;
 public:
-	cpBBTree* get(){
+	inline cpBBTree* get(){
 		return bbtree;
 }
 /// Allocate and initialize a bounding box tree.
-	BBTree(cpSpatialIndexBBFunc bbfunc,cpSpatialIndex *staticIndex);
+	BBTree(cpSpatialIndexBBFunc bbfunc,cp::SpatialIndex *staticIndex);
 /// Perform a static top down optimization of the tree.
 	void optimize();
 /// Set the velocity function for the bounding box tree to enable temporal coherence.

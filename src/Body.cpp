@@ -1,17 +1,17 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
  */
 #include "Body.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
-#include "Shape.hpp"
-#include <functional>
 #include "Arbiter.hpp"
-#include "Space.hpp"
-#include "Vect.hpp"
 #include "Constraint.hpp"
+#include "Space.hpp"
+#include <functional>
+#include "Vect.hpp"
+#include "Shape.hpp"
 #include "Body.hpp"
 
 class Body;
@@ -43,7 +43,7 @@ void Body::activate()
 {
 		cpBodyActivate(body);
 }
-void Body::activateStatic(cpShape *filter)
+void Body::activateStatic(cp::Shape *filter)
 {
 		cpBodyActivateStatic(body,filter ? filter->get() : 0);
 }
@@ -51,7 +51,7 @@ void Body::sleep()
 {
 		cpBodySleep(body);
 }
-void Body::sleepWithGroup(cpBody *group)
+void Body::sleepWithGroup(cp::Body *group)
 {
 		cpBodySleepWithGroup(body,group ? group->get() : 0);
 }
@@ -75,7 +75,7 @@ void Body::setMoment(cpFloat i)
 {
 		cpBodySetMoment(body,i);
 }
-void Body::setPos(cpVect pos)
+void Body::setPos(cp::Vect pos)
 {
 		cpBodySetPos(body,pos);
 }
@@ -83,7 +83,7 @@ void Body::setAngle(cpFloat a)
 {
 		cpBodySetAngle(body,a);
 }
-void Body::updateVelocity(cpVect gravity,cpFloat damping,cpFloat dt)
+void Body::updateVelocity(cp::Vect gravity,cpFloat damping,cpFloat dt)
 {
 		cpBodyUpdateVelocity(body,gravity,damping,dt);
 }
@@ -91,11 +91,11 @@ void Body::updatePosition(cpFloat dt)
 {
 		cpBodyUpdatePosition(body,dt);
 }
-cpVect Body::local2World(const cpVect v)
+cp::Vect Body::local2World(const cp::Vect v)
 {
 		return cpBodyLocal2World(body,v);
 }
-cpVect Body::world2Local(const cpVect v)
+cp::Vect Body::world2Local(const cp::Vect v)
 {
 		return cpBodyWorld2Local(body,v);
 }
@@ -103,19 +103,19 @@ void Body::resetForces()
 {
 		cpBodyResetForces(body);
 }
-void Body::applyForce(const cpVect f,const cpVect r)
+void Body::applyForce(const cp::Vect f,const cp::Vect r)
 {
 		cpBodyApplyForce(body,f,r);
 }
-void Body::applyImpulse(const cpVect j,const cpVect r)
+void Body::applyImpulse(const cp::Vect j,const cp::Vect r)
 {
 		cpBodyApplyImpulse(body,j,r);
 }
-cpVect Body::getVelAtWorldPoint(cpVect point)
+cp::Vect Body::getVelAtWorldPoint(cp::Vect point)
 {
 		return cpBodyGetVelAtWorldPoint(body,point);
 }
-cpVect Body::getVelAtLocalPoint(cpVect point)
+cp::Vect Body::getVelAtLocalPoint(cp::Vect point)
 {
 		return cpBodyGetVelAtLocalPoint(body,point);
 }

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,11 +15,11 @@ class CircleShape : public Shape {
 protected:
 	cpCircleShape* circleshape;
 public:
-	cpCircleShape* get(){
+	inline cpCircleShape* get(){
 		return circleshape;
 }
 /// Allocate and initialize a circle shape.
-	CircleShape(cpBody *body,cpFloat radius,cpVect offset);
+	CircleShape(cp::Body *body,cpFloat radius,cp::Vect offset);
 	cp::Vect getOffset(void);
 	cpFloat getRadius(void);
 

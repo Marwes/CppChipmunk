@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -24,7 +24,7 @@ protected:
 	friend class  cp::Space;
 ;
 public:
-	cpBody* get(){
+	inline cpBody* get(){
 		return body;
 }
 /// Allocate and initialize a cpBody.
@@ -37,11 +37,11 @@ public:
 /// Wake up a sleeping or idle body.
 	void activate();
 /// Wake up any sleeping or idle bodies touching a static body.
-	void activateStatic(cpShape *filter);
+	void activateStatic(cp::Shape *filter);
 /// Force a body to fall asleep immediately.
 	void sleep();
 /// Force a body to fall asleep immediately along with other bodies in a group.
-	void sleepWithGroup(cpBody *group);
+	void sleepWithGroup(cp::Body *group);
 /// Returns true if the body is sleeping.
 	cpBool isSleeping();
 /// Returns true if the body is static.
@@ -53,26 +53,26 @@ public:
 /// Set the moment of a body.
 	void setMoment(cpFloat i);
 /// Set the position of a body.
-	void setPos(cpVect pos);
+	void setPos(cp::Vect pos);
 /// Set the angle of a body.
 	void setAngle(cpFloat a);
 /// Default Integration functions.
-	void updateVelocity(cpVect gravity,cpFloat damping,cpFloat dt);
+	void updateVelocity(cp::Vect gravity,cpFloat damping,cpFloat dt);
 	void updatePosition(cpFloat dt);
 /// Convert body relative/local coordinates to absolute/world coordinates.
-	cpVect local2World(const cpVect v);
+	cp::Vect local2World(const cp::Vect v);
 /// Convert body absolute/world coordinates to  relative/local coordinates.
-	cpVect world2Local(const cpVect v);
+	cp::Vect world2Local(const cp::Vect v);
 /// Set the forces and torque or a body to zero.
 	void resetForces();
 /// Apply an force (in world coordinates) to the body at a point relative to the center of gravity (also in world coordinates).
-	void applyForce(const cpVect f,const cpVect r);
+	void applyForce(const cp::Vect f,const cp::Vect r);
 /// Apply an impulse (in world coordinates) to the body at a point relative to the center of gravity (also in world coordinates).
-	void applyImpulse(const cpVect j,const cpVect r);
+	void applyImpulse(const cp::Vect j,const cp::Vect r);
 /// Get the velocity on a body (in world units) at a point on the body in world coordinates.
-	cpVect getVelAtWorldPoint(cpVect point);
+	cp::Vect getVelAtWorldPoint(cp::Vect point);
 /// Get the velocity on a body (in world units) at a point on the body in local coordinates.
-	cpVect getVelAtLocalPoint(cpVect point);
+	cp::Vect getVelAtLocalPoint(cp::Vect point);
 /// Get the kinetic energy of a body.
 	cpFloat kineticEnergy();
 	void eachShape(cpBodyShapeIteratorFunc func,void *data);

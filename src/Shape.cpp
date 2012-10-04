@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
  */
 #include "Shape.hpp"
 #include "chipmunk.h"
@@ -17,27 +17,27 @@ Shape::~Shape()
 {
 		cpShapeFree(shape);
 }
-cpBB Shape::cacheBB()
+cp::BB Shape::cacheBB()
 {
 		return cpShapeCacheBB(shape);
 }
-cpBB Shape::update(cpVect pos,cpVect rot)
+cp::BB Shape::update(cp::Vect pos,cp::Vect rot)
 {
 		return cpShapeUpdate(shape,pos,rot);
 }
-cpBool Shape::pointQuery(cpVect p)
+cpBool Shape::pointQuery(cp::Vect p)
 {
 		return cpShapePointQuery(shape,p);
 }
-cpFloat Shape::nearestPointQuery(cpVect p,cpNearestPointQueryInfo *out)
+cpFloat Shape::nearestPointQuery(cp::Vect p,cpNearestPointQueryInfo *out)
 {
 		return cpShapeNearestPointQuery(shape,p,out);
 }
-cpBool Shape::segmentQuery(cpVect a,cpVect b,cpSegmentQueryInfo *info)
+cpBool Shape::segmentQuery(cp::Vect a,cp::Vect b,cpSegmentQueryInfo *info)
 {
 		return cpShapeSegmentQuery(shape,a,b,info);
 }
-void Shape::setBody(cpBody *body)
+void Shape::setBody(cp::Body *body)
 {
 		cpShapeSetBody(shape,body ? body->get() : 0);
 }

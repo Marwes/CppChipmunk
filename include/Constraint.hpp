@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 18:53:20.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,7 +15,7 @@ protected:
 	cpConstraint* constraint;
 	cpDataPointer data;
 public:
-	cpConstraint* get(){
+	inline cpConstraint* get(){
 		return constraint;
 }
 /// Destroy and free a constraint.

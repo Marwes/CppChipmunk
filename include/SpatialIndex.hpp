@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -25,12 +25,12 @@ class SpatialIndex {
 protected:
 	cpSpatialIndex* index;
 public:
-	cpSpatialIndex* get(){
+	inline cpSpatialIndex* get(){
 		return index;
 }
 /// Destroy and free a spatial index.
 	~SpatialIndex();
-	void collideStatic(cpSpatialIndex *staticIndex,cpSpatialIndexQueryFunc func,void *data);
+	void collideStatic(cp::SpatialIndex *staticIndex,cpSpatialIndexQueryFunc func,void *data);
 /// Collide the objects in @c dynamicIndex against the objects in @c staticIndex using the query callback function.
 	void collideStatic(cpSpatialIndex *staticIndex,SpatialIndexQueryFunc func);
 /// Get the number of objects in the spatial index.
@@ -51,10 +51,10 @@ public:
 	void reindex();
 /// Reindex a single object in the spatial index.
 	void reindexObject(void *obj,cpHashValue hashid);
-	void query(void *obj,cpBB bb,cpSpatialIndexQueryFunc func,void *data);
+	void query(void *obj,cp::BB bb,cpSpatialIndexQueryFunc func,void *data);
 /// Perform a rectangle query against the spatial index, calling @c func for each potential match.
 	void query(void *obj,cpBB bb,SpatialIndexQueryFunc func);
-	void segmentQuery(void *obj,cpVect a,cpVect b,cpFloat t_exit,cpSpatialIndexSegmentQueryFunc func,void *data);
+	void segmentQuery(void *obj,cp::Vect a,cp::Vect b,cpFloat t_exit,cpSpatialIndexSegmentQueryFunc func,void *data);
 /// Perform a segment query against the spatial index, calling @c func for each potential match.
 	void segmentQuery(void *obj,cpVect a,cpVect b,cpFloat t_exit,SpatialIndexSegmentQueryFunc func);
 	void reindexQuery(cpSpatialIndexQueryFunc func,void *data);

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,12 +15,12 @@ class GearJoint : public Constraint {
 protected:
 	cpGearJoint* gearjoint;
 public:
-	cpGearJoint* get(){
+	inline cpGearJoint* get(){
 		return gearjoint;
 }
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a gear joint.
-	GearJoint(cpBody *a,cpBody *b,cpFloat phase,cpFloat ratio);
+	GearJoint(cp::Body *a,cp::Body *b,cpFloat phase,cpFloat ratio);
 /// Set the ratio of a gear joint.
 	void setRatio(cpFloat value);
 	cpFloat getPhase(void);

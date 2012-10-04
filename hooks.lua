@@ -66,6 +66,7 @@ functionHooks = {
 				local cpTypedef = functionTypedefs[v.type:gsub("%s*", "")]
 				if cpTypedef then
 					local stdFunc = makeStdFunction(cpTypedef.returnType, cpTypedef.args)
+					
 					local typedefName = toClass(v.type):gsub(getNamespace(), "")
 					class.additionalText = class.additionalText.."\ttypedef "..stdFunc..typedefName..";\n"
 

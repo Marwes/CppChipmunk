@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,11 +15,11 @@ class Sweep1D : public SpatialIndex {
 protected:
 	cpSweep1D* sweep1d;
 public:
-	cpSweep1D* get(){
+	inline cpSweep1D* get(){
 		return sweep1d;
 }
 /// Allocate and initialize a 1D sort and sweep broadphase.
-	Sweep1D(cpSpatialIndexBBFunc bbfunc,cpSpatialIndex *staticIndex);
+	Sweep1D(cpSpatialIndexBBFunc bbfunc,cp::SpatialIndex *staticIndex);
 
 };
 };//namespace cp

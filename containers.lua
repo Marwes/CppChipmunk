@@ -13,7 +13,8 @@ function Method:new( tab )
 end
 
 function Method:makeDeclaration()
-	local out = "\t"..self.returnType..self.name.."(".. makeRawParameters(self.parameters, true)..")"
+	local out = "\t".. (self.inline and "inline " or "")
+	out = out..self.returnType..self.name.."(".. makeRawParameters(self.parameters, true)..")"
 	if self.inline then
 		out = out..self:makeMethodBody()
 	else

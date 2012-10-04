@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
  */
 #pragma once
 
@@ -15,12 +15,12 @@ class SlideJoint : public Constraint {
 protected:
 	cpSlideJoint* slidejoint;
 public:
-	cpSlideJoint* get(){
+	inline cpSlideJoint* get(){
 		return slidejoint;
 }
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a slide joint.
-	SlideJoint(cpBody *a,cpBody *b,cpVect anchr1,cpVect anchr2,cpFloat min,cpFloat max);
+	SlideJoint(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2,cpFloat min,cpFloat max);
 	cp::Vect getAnchr1(void);
 	void setAnchr1(cp::Vect value);
 	cp::Vect getAnchr2(void);

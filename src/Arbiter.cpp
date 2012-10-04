@@ -1,20 +1,22 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
  */
 #include "Arbiter.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Vect.hpp"
+#include "Shape.hpp"
+#include "Body.hpp"
 
 namespace cp {
 
-cpVect Arbiter::totalImpulse()
+cp::Vect Arbiter::totalImpulse()
 {
 		return cpArbiterTotalImpulse(arb);
 }
-cpVect Arbiter::totalImpulseWithFriction()
+cp::Vect Arbiter::totalImpulseWithFriction()
 {
 		return cpArbiterTotalImpulseWithFriction(arb);
 }
@@ -26,14 +28,14 @@ void Arbiter::ignore()
 {
 		cpArbiterIgnore(arb);
 }
-void Arbiter::getShapes(cpShape *&a,cpShape *&b)
+void Arbiter::getShapes(cp::Shape *&a,cp::Shape *&b)
 {
 		cpShape *a_, *b_;
 		cpArbiterGetShapes(arb, &a_, &b_);
 		a = static_cast<cp::Shape*>(a_->data);
 		b = static_cast<cp::Shape*>(b_->data);
 }
-void Arbiter::getBodies(cpBody *&a,cpBody *&b)
+void Arbiter::getBodies(cp::Body *&a,cp::Body *&b)
 {
 		cpBody *a_, *b_;
 		cpArbiterGetBodies(arb, &a_, &b_);
@@ -52,11 +54,11 @@ int Arbiter::getCount()
 {
 		return cpArbiterGetCount(arb);
 }
-cpVect Arbiter::getNormal(int i)
+cp::Vect Arbiter::getNormal(int i)
 {
 		return cpArbiterGetNormal(arb,i);
 }
-cpVect Arbiter::getPoint(int i)
+cp::Vect Arbiter::getPoint(int i)
 {
 		return cpArbiterGetPoint(arb,i);
 }
