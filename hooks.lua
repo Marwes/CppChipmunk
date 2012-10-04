@@ -67,7 +67,7 @@ functionHooks = {
 				if cpTypedef then
 					local stdFunc = makeStdFunction(cpTypedef.returnType, cpTypedef.args)
 					
-					local typedefName = toClass(v.type):gsub(getNamespace(), "")
+					local typedefName = toCppType(v.type):gsub(getNamespace(), "")
 					class.additionalText = class.additionalText.."\ttypedef "..stdFunc..typedefName..";\n"
 
 					v.type = typedefName
@@ -83,7 +83,7 @@ functionHooks = {
 							fun = fun.."\t\t"..getNamespace().."Arbiter tempArbiter("..arg.name..");\n"
 							arg.name = "&tempArbiter"
 						elseif arg.name ~= "data" then
-							arg.name = "static_cast<"..toClass(arg.type)..">("..arg.name.."->data)"
+							arg.name = "static_cast<"..toCppType(arg.type)..">("..arg.name.."->data)"
 						end
 					end
 					local returnTrueOrVoid = cpTypedef.returnType == "void " and "" or " true"
@@ -143,14 +143,14 @@ functionHooks = {
 
 			for _,v in ipairs(argTable) do
 				if _ ~= 1 then
-					v.type = toClass(v.type):gsub("%*%*", "*")
+					v.type = toCppType(v.type):gsub("%*%*", "*")
 					v.name = "&"..v.name
 				end
 			end
 			local body = argType.." *a_, *b_;\n"
 			body = body.."\t\t"..functionName.."("..argTable[1].name..", &a_, &b_);\n"
-			body = body.."\t\ta = static_cast<"..toClass(argType).."*>(a_->data);\n"
-			body = body.."\t\tb = static_cast<"..toClass(argType).."*>(b_->data);\n"
+			body = body.."\t\ta = static_cast<"..toCppType(argType).."*>(a_->data);\n"
+			body = body.."\t\tb = static_cast<"..toCppType(argType).."*>(b_->data);\n"
 
 			table.remove(argTable, 1)
 			return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
@@ -346,7 +346,7 @@ functionHooks = {
 
 			local returnIfNotVoid = returnType:find("void%s*%**") and "" or "return "
 			if classes[toRawStruct(returnType)] then
-				returnType = toClass(returnType)
+				returnType = toCppType(returnType)
 			end
 
 			local args = copyTable(argTable)

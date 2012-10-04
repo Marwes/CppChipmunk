@@ -374,7 +374,7 @@ function toRawStruct( struct )
 	return out
 end
 
-function toClass( struct )
+function toCppType( struct )
 	if classes[toRawStruct(struct)] or functionTypedefs[struct:gsub("%s", "")] then
 		if struct:find("^const ") then
 			return struct:gsub("^const cp", "const "..getNamespace())
@@ -411,7 +411,7 @@ function makeParameters(tab, struct )
 		v.type = v.type:gsub("cpVect ", namespace.."::Vect& ")
 		v.type = v.type:gsub("cpBB ", namespace.."::BB& ")
 		if classes[toRawStruct(v.type)] and classes[toRawStruct(v.type)].hasMethods then
-			v.type = "const "..toClass(v.type):gsub("%s*%*%s*", "& ")
+			v.type = "const "..toCppType(v.type):gsub("%s*%*%s*", "& ")
 		end
 		out = out..v["type"]..v["name"]..","
 	end
@@ -450,7 +450,7 @@ function makeArguments(tab, struct, makeFirstArgThisOrMemberIsThis)
 				end
 			elseif v.name == "" then
 				out = out.."get(),"
-			elseif v.type:find(toClass("cpBB")) or v.type:find(toClass("cpVect")) then
+			elseif v.type:find(toCppType("cpBB")) or v.type:find(toCppType("cpVect")) then
 				out = out..v.name..","
 			else
 				out = out..v.name.." ? "..v.name.."->get() : 0,"
@@ -475,7 +475,7 @@ end
 function toCppTypes( tab )
 	for _,v in ipairs(tab) do
 		if classes[toRawStruct(v.type)] and classes[toRawStruct(v.type)].hasMethods then
-			v.type = toClass(v.type)
+			v.type = toCppType(v.type)
 		end
 	end
 end
@@ -493,7 +493,7 @@ function addGetCall( tab,struct )
 			else
 				v.name = v.name.." ? "..v.name.."->get() : 0"
 			end
-		elseif struct and (v.type:find(struct)or v.type:find(toClass(struct))) 
+		elseif struct and (v.type:find(struct)or v.type:find(toCppType(struct))) 
 			and (v.type:find("cpBB") or v.type:find("cpVect") or v.type:find("cp::BB") or v.type:find("cp::Vect")) and k == 1 then
 			v.name = "*this"
 		end
@@ -521,7 +521,7 @@ function makeCppMethod(returnType, functionName, argTable )
 	local returnStruct = toRawStruct(returnType) --We need the struct without it being a pointer to check if it is a type we have a class for
 	
 	if returnIfNotVoid ~= "" and classes[returnStruct] and classes[returnStruct].hasMethods and struct then 
-		returnType = toClass(returnType)
+		returnType = toCppType(returnType)
 	end
 
 	local tab = copyTable(argTable)
@@ -566,7 +566,7 @@ function makeFunction(returnType, functionName, argTable )
 
 	return Method:new({
 		inline=true,
-		returnType=toClass(returnType),
+		returnType=toCppType(returnType),
 		name=cppFunctionName,
 		body=body,
 		parameters=argTable
@@ -772,14 +772,14 @@ function parseText(text )
 				local returnType = type
 
 				if classes[rawStruct] and classes[rawStruct].hasDataPointer then
-					returnType = toClass(rawStruct).."*"
+					returnType = toCppType(rawStruct).."*"
 					local f = "cp"..class.."Get"..name.."("..structMember..")"
 					body = rawStruct.." *temp = "..f..";\n"
 					body = body.."\t\treturn static_cast<"..returnType..">(temp ? temp->data : 0);\n"
 				elseif rawStruct == "cpDataPointer" then
 					body = "return data;\n"
 				elseif returnType == "cpVect" or returnType == "cpBB" then
-					returnType = toClass(returnType)
+					returnType = toCppType(returnType)
 				end
 
 				local m = Method:new({ 
@@ -796,7 +796,7 @@ function parseText(text )
 				local body = "cp"..class.."Set"..name.."("..structMember..",value);\n"
 
 				if classes[toRawStruct(type)] then
-					type = toClass(type)
+					type = toCppType(type)
 				elseif toRawStruct(type) == "cpDataPointer" then
 					body = "data = value;\n"
 				end
