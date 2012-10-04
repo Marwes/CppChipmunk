@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
  */
 #include "CircleShape.hpp"
 #include "chipmunk.h"
@@ -11,14 +11,6 @@
 
 namespace cp {
 
-void CircleShape::setRadius(cpFloat radius)
-{
-		cpCircleShapeSetRadius(Shape::get(),radius);
-}
-void CircleShape::setOffset(cpVect offset)
-{
-		cpCircleShapeSetOffset(Shape::get(),offset);
-}
 CircleShape::CircleShape(cpBody *body,cpFloat radius,cpVect offset)
 	: Shape(cpCircleShapeNew(body ? body->get() : 0,radius,offset))
 {

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #pragma once
 
@@ -34,9 +34,9 @@ namespace cp {
 /// Point query callback function type.
 	typedef std::function<void (cp::Shape *)> SpacePointQueryFunc ;
 /// Nearest point query callback function type.
-	typedef std::function<void (cp::Shape *,cpFloat ,cpVect )> SpaceNearestPointQueryFunc ;
+	typedef std::function<void (cp::Shape *,cpFloat ,cp::Vect )> SpaceNearestPointQueryFunc ;
 /// Segment query callback function type.
-	typedef std::function<void (cp::Shape *,cpFloat ,cpVect )> SpaceSegmentQueryFunc ;
+	typedef std::function<void (cp::Shape *,cpFloat ,cp::Vect )> SpaceSegmentQueryFunc ;
 /// Rectangle Query callback function type.
 	typedef std::function<void (cp::Shape *)> SpaceBBQueryFunc ;
 /// Shape query callback function type.
@@ -46,7 +46,7 @@ namespace cp {
 /// Space/body iterator callback function type.
 	typedef std::function<void (cp::Shape *)> SpaceShapeIteratorFunc ;
 /// Space/constraint iterator callback function type.
-	typedef std::function<void (cpConstraint *)> SpaceConstraintIteratorFunc ;
+	typedef std::function<void (cp::Constraint *)> SpaceConstraintIteratorFunc ;
 
 class Space {
 protected:
@@ -62,16 +62,6 @@ public:
 	void segmentQuery_b(cpVect start,cpVect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryBlock block);
 	void BBQuery_b(cpBB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryBlock block);
 	cpBool shapeQuery_b(cpShape *shape,cpSpaceShapeQueryBlock block);
-	void processComponents(cpFloat dt);
-	void pushFreshContactBuffer();
-	void pushContacts(int count);
-	cpPostStepCallback *getPostStepCallback(void *key);
-	cpBool arbiterSetFilter(cpSpace *space);
-	void filterArbiters(cpBody *body,cpShape *filter);
-	void activateBody(cpBody *body);
-	void lock();
-	void unlock(cpBool runPostStep);
-	void collideShapes(cpShape *b,cpSpace *space);
 /// Allocate and initialize a cpSpace.
 	Space(void);
 /// Destroy and free a cpSpace.

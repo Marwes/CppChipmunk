@@ -1,14 +1,15 @@
 --Configuration
-DEBUG = true
-if DEBUG then --Skip the constraints for the moment while debugging
-	recursive = false
-else
-	recursive = true
-end
+recursive = true
 directory = "."
 outFolder = ""
 chipmunkPath = "../Chipmunk-6.1.1/include/chipmunk"
 namespace = "cp"
+parseChipmunkPrivate = false
+
+additionalFiles = {
+	["chipmunk.h"]=true,
+	["chipmunk_private.h"]=parseChipmunkPrivate
+}
 
 
 
@@ -54,6 +55,16 @@ function cleanText(text)
 	return text
 end
 
+function parseThisFile(file)
+	if file:find("%.h") 
+		and (file:sub(1,2) == "cp"
+			or additionalFiles[file]) then --Means we skip chipmunk_unsafe, chipmunk_types etc
+		return true
+	else
+		return false
+	end
+end
+
 --Fills the table classes with information from all the structs encountered
 --This is called before the actual parsing of functions since we need information from
 --all of the structs for example if  they have a data pointer
@@ -62,7 +73,7 @@ end
 function buildTypesFromDir( dir, recursive )
 	for file in lfs.dir(dir) do
 		local fullName = dir.."/"..file
-		if file:find("%.h") or file == "chipmunk.h" then --Means we skip chipmunk_unsafe, chipmunk_types etc
+		if parseThisFile(file) then
 			local f = assert(io.open(dir.."/"..file))
 			local text = f:read("*all")
 			f:close()
@@ -79,7 +90,7 @@ end
 function parseTextFromDir( dir, recursive )
 	for file in lfs.dir(dir) do
 		local fullName = dir.."/"..file
-		if file:find("%.h") or file == "chipmunk.h" then --Means we skip chipmunk_unsafe, chipmunk_types etc
+		if parseThisFile(file) then --Means we skip chipmunk_unsafe, chipmunk_types etc
 			local f = assert(io.open(dir.."/"..file))
 			local text = f:read("*all")
 			f:close()
@@ -459,7 +470,7 @@ end
 function toCppTypes( tab )
 	for _,v in ipairs(tab) do
 		if classes[toRawStruct(v.type)] and classes[toRawStruct(v.type)].hasMethods then
-			v.type = toClass(v.type) --:gsub("%s*%*%s*", "& ")
+			v.type = toClass(v.type)
 		end
 	end
 end
@@ -547,7 +558,7 @@ function makeFunction(returnType, functionName, argTable )
 	toCppTypes(argTable)
 
 	local body = makeReturn(returnType)..functionName.."("..makeRawArguments(argTable)..");\n"
-	print(body)
+
 	return Method:new({
 		inline=true,
 		returnType=toClass(returnType),
@@ -679,7 +690,6 @@ function parseText(text )
 	matchAll(functionPattern, text,
 		function (b, comment, returnType, functionName, tab, e)
 		if b then
-			if functionName:find("Moment") then print(functionName) end
 			local _, struct = getMethodInfo(functionName)
 			if struct and classes[struct] then
 				classes[struct].hasMethods = true

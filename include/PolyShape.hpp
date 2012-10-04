@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
  */
 #pragma once
 
@@ -18,8 +18,6 @@ public:
 	cpPolyShape* get(){
 		return polyshape;
 }
-/// Set the vertexes of a poly shape.
-	void setVerts(int numVerts,cpVect *verts,cpVect offset);
 /// Allocate and initialize a polygon shape.
 /// A convex hull will be created from the vertexes.
 	PolyShape(cp::Body *body,int numVerts,cpVect *verts,cpVect offset);

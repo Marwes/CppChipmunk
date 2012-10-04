@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 19:02:38.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #pragma once
 
@@ -20,7 +20,7 @@ public:
 }
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a groove joint.
-	GrooveJoint(cp::Body *a,cp::Body *b,cpVect groove_a,cpVect groove_b,cpVect anchr2);
+	GrooveJoint(cpBody *a,cpBody *b,cpVect groove_a,cpVect groove_b,cpVect anchr2);
 /// Set endpoint a of a groove joint's groove
 	void setGrooveA(cpVect value);
 /// Set endpoint b of a groove joint's groove

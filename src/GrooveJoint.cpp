@@ -1,14 +1,13 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 19:02:38.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #include "GrooveJoint.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
 #include "Vect.hpp"
-#include "Body.hpp"
 
 namespace cp {
 
@@ -16,7 +15,7 @@ const cpConstraintClass *GrooveJoint::getClass()
 {
 		return cpGrooveJointGetClass();
 }
-GrooveJoint::GrooveJoint(cp::Body *a,cp::Body *b,cpVect groove_a,cpVect groove_b,cpVect anchr2)
+GrooveJoint::GrooveJoint(cpBody *a,cpBody *b,cpVect groove_a,cpVect groove_b,cpVect anchr2)
 	: Constraint(cpGrooveJointNew(a ? a->get() : 0,b ? b->get() : 0,groove_a,groove_b,anchr2))
 {
 		constraint->data = this;

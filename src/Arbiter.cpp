@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
  */
 #include "Arbiter.hpp"
 #include "chipmunk.h"
@@ -10,22 +10,6 @@
 
 namespace cp {
 
-void Arbiter::unthread()
-{
-		cpArbiterUnthread(arb);
-}
-void Arbiter::preStep(cpFloat dt,cpFloat bias,cpFloat slop)
-{
-		cpArbiterPreStep(arb,dt,bias,slop);
-}
-void Arbiter::applyCachedImpulse(cpFloat dt_coef)
-{
-		cpArbiterApplyCachedImpulse(arb,dt_coef);
-}
-void Arbiter::applyImpulse()
-{
-		cpArbiterApplyImpulse(arb);
-}
 cpVect Arbiter::totalImpulse()
 {
 		return cpArbiterTotalImpulse(arb);

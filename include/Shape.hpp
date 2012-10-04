@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
  */
 #pragma once
 
@@ -18,7 +18,6 @@ public:
 	cpShape* get(){
 		return shape;
 }
-	void updateFunc(void *unused);
 /// Destroy and Free a shape.
 	~Shape();
 /// Update, cache and return the bounding box of a shape based on the body it's attached to.

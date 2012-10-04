@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
  */
 #pragma once
 
@@ -17,10 +17,6 @@ public:
 	cpArbiter* get(){
 		return arb;
 }
-	void unthread();
-	void preStep(cpFloat dt,cpFloat bias,cpFloat slop);
-	void applyCachedImpulse(cpFloat dt_coef);
-	void applyImpulse();
 /// Calculate the total impulse that was applied by this arbiter.
 /// This function should only be called from a post-solve, post-step or cpBodyEachArbiter callback.
 	cpVect totalImpulse();

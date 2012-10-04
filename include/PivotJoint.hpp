@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 19:02:38.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #pragma once
 
@@ -20,9 +20,9 @@ public:
 }
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a pivot joint.
-	PivotJoint(cp::Body *a,cp::Body *b,cpVect pivot);
+	PivotJoint(cpBody *a,cpBody *b,cpVect pivot);
 /// Allocate and initialize a pivot joint with specific anchors.
-	PivotJoint(cp::Body *a,cp::Body *b,cpVect anchr1,cpVect anchr2);
+	PivotJoint(cpBody *a,cpBody *b,cpVect anchr1,cpVect anchr2);
 	cp::Vect getAnchr1(void);
 	void setAnchr1(cp::Vect value);
 	cp::Vect getAnchr2(void);

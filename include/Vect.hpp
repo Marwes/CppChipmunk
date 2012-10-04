@@ -1,22 +1,17 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:40:05.
  */
 #pragma once
 
 #include "chipmunk.h"
-#include "chipmunk_declarations.hpp"
 
 namespace cp {
 
-class Vect {
+class Vect : public cpVect {
 protected:
-	cpVect  vect;
 public:
-	cpVect  get(){
-		return vect;
-}
 	Vect(cpVect cv);
 /// Convenience constructor for cpVect structs.
 	Vect(const cpFloat x = 0,const cpFloat y = 0);
@@ -78,7 +73,6 @@ public:
 	cpFloat distsq(Vect& v2);
 /// Returns true if the distance between v1 and v2 is less than dist.
 	cpBool near(Vect& v2,const cpFloat dist);
-	Vect(cpVect  v);
 
 };
 };//namespace cp

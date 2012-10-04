@@ -1,17 +1,18 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #include "Space.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include <unordered_map>
-#include <functional>
 #include "Space.hpp"
-#include "Arbiter.hpp"
-#include "Vect.hpp"
 #include "Shape.hpp"
+#include "Arbiter.hpp"
+#include <functional>
+#include "Vect.hpp"
+#include "Constraint.hpp"
 #include "Body.hpp"
 
 class Space;
@@ -48,47 +49,6 @@ void Space::BBQuery_b(cpBB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryBlock 
 cpBool Space::shapeQuery_b(cpShape *shape,cpSpaceShapeQueryBlock block)
 {
 		return cpSpaceShapeQuery_b(space,shape ? shape->get() : 0,block);
-}
-void Space::processComponents(cpFloat dt)
-{
-		cpSpaceProcessComponents(space,dt);
-}
-void Space::pushFreshContactBuffer()
-{
-		cpSpacePushFreshContactBuffer(space);
-}
-void Space::pushContacts(int count)
-{
-		cpSpacePushContacts(space,count);
-}
-cpPostStepCallback *Space::getPostStepCallback(void *key)
-{
-		cpPostStepCallback * temp = cpSpaceGetPostStepCallback(space,key);
-		return static_cast<cpPostStepCallback *>(temp ? temp->data : 0);
-}
-cpBool Space::arbiterSetFilter(cpSpace *space)
-{
-		return cpSpaceArbiterSetFilter(arb ? arb->get() : 0,get());
-}
-void Space::filterArbiters(cpBody *body,cpShape *filter)
-{
-		cpSpaceFilterArbiters(space,body ? body->get() : 0,filter ? filter->get() : 0);
-}
-void Space::activateBody(cpBody *body)
-{
-		cpSpaceActivateBody(space,body ? body->get() : 0);
-}
-void Space::lock()
-{
-		cpSpaceLock(space);
-}
-void Space::unlock(cpBool runPostStep)
-{
-		cpSpaceUnlock(space,runPostStep);
-}
-void Space::collideShapes(cpShape *b,cpSpace *space)
-{
-		cpSpaceCollideShapes(a ? a->get() : 0,b ? b->get() : 0,get());
 }
 Space::Space(void)
 	: space(cpSpaceNew()),
@@ -144,7 +104,7 @@ cpBody* Space::addBody(cpBody *body)
 }
 cpConstraint* Space::addConstraint(cpConstraint *constraint)
 {
-		cpConstraint*  temp = cpSpaceAddConstraint(space,constraint);
+		cpConstraint*  temp = cpSpaceAddConstraint(space,constraint ? constraint->get() : 0);
 		return static_cast<cpConstraint* >(temp ? temp->data : 0);
 }
 void Space::removeShape(cpShape *shape)
@@ -161,7 +121,7 @@ void Space::removeBody(cpBody *body)
 }
 void Space::removeConstraint(cpConstraint *constraint)
 {
-		cpSpaceRemoveConstraint(space,constraint);
+		cpSpaceRemoveConstraint(space,constraint ? constraint->get() : 0);
 }
 cpBool Space::containsShape(cpShape *shape)
 {
@@ -173,7 +133,7 @@ cpBool Space::containsBody(cpBody *body)
 }
 cpBool Space::containsConstraint(cpConstraint *constraint)
 {
-		return cpSpaceContainsConstraint(space,constraint);
+		return cpSpaceContainsConstraint(space,constraint ? constraint->get() : 0);
 }
 cpBool Space::addPostStepCallback(cpPostStepFunc func,void *key,void *data)
 {
@@ -424,12 +384,12 @@ namespace {
 
 	void SpaceNearestPointQuery(cpShape *shape,cpFloat distance,cpVect point,void *data)
 	{
-				(*reinterpret_cast<std::function<void (cp::Shape *,cpFloat ,cpVect )> *>(data))((cp::Shape *)shape->data,distance,point);
+				(*reinterpret_cast<std::function<void (cp::Shape *,cpFloat ,cp::Vect )> *>(data))((cp::Shape *)shape->data,distance,point);
 	}
 
 	void SpaceSegmentQuery(cpShape *shape,cpFloat t,cpVect n,void *data)
 	{
-				(*reinterpret_cast<std::function<void (cp::Shape *,cpFloat ,cpVect )> *>(data))((cp::Shape *)shape->data,t,n);
+				(*reinterpret_cast<std::function<void (cp::Shape *,cpFloat ,cp::Vect )> *>(data))((cp::Shape *)shape->data,t,n);
 	}
 
 	void SpaceBBQuery(cpShape *shape,void *data)
@@ -454,7 +414,7 @@ namespace {
 
 	void SpaceEachConstraint(cpConstraint *constraint,void *data)
 	{
-				(*reinterpret_cast<std::function<void (cpConstraint *)> *>(data))(constraint);
+				(*reinterpret_cast<std::function<void (cp::Constraint *)> *>(data))((cp::Constraint *)constraint->data);
 	}
 
 }

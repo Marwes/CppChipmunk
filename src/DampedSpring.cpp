@@ -1,14 +1,13 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 19:02:38.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #include "DampedSpring.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
 #include "Vect.hpp"
-#include "Body.hpp"
 
 namespace cp {
 
@@ -16,7 +15,7 @@ const cpConstraintClass *DampedSpring::getClass()
 {
 		return cpDampedSpringGetClass();
 }
-DampedSpring::DampedSpring(cp::Body *a,cp::Body *b,cpVect anchr1,cpVect anchr2,cpFloat restLength,cpFloat stiffness,cpFloat damping)
+DampedSpring::DampedSpring(cpBody *a,cpBody *b,cpVect anchr1,cpVect anchr2,cpFloat restLength,cpFloat stiffness,cpFloat damping)
 	: Constraint(cpDampedSpringNew(a ? a->get() : 0,b ? b->get() : 0,anchr1,anchr2,restLength,stiffness,damping))
 {
 		constraint->data = this;

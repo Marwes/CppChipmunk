@@ -1,28 +1,36 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:46:42.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #pragma once
 #include "chipmunk_declarations.hpp"
 #include "Vect.hpp"
 #include "BB.hpp"
+#include "Constraint.hpp"
 #include "Arbiter.hpp"
+#include "PivotJoint.hpp"
 #include "BBTree.hpp"
-#include "Array.hpp"
-#include "HashSet.hpp"
-#include "Space.hpp"
-#include "Contact.hpp"
 #include "Body.hpp"
-#include "SpatialIndex.hpp"
 #include "SpaceHash.hpp"
-#include "BB.hpp"
 #include "Shape.hpp"
+#include "PinJoint.hpp"
+#include "GearJoint.hpp"
+#include "Sweep1D.hpp"
+#include "SimpleMotor.hpp"
+#include "DampedRotarySpring.hpp"
+#include "SpatialIndex.hpp"
+#include "RatchetJoint.hpp"
+#include "BB.hpp"
+#include "RotaryLimitJoint.hpp"
 #include "Vect.hpp"
+#include "SlideJoint.hpp"
+#include "DampedSpring.hpp"
 #include "SegmentShape.hpp"
 #include "PolyShape.hpp"
+#include "GrooveJoint.hpp"
+#include "Space.hpp"
 #include "CircleShape.hpp"
-#include "Sweep1D.hpp"
 namespace cp {
 /// Calculate the moment of inertia for a circle.
 /// @c r1 and @c r2 are the inner and outer diameters. A solid circle has an inner diameter of 0.
@@ -84,49 +92,6 @@ namespace cp {
 /// @c tol is the allowed amount to shrink the hull when simplifying it. A tolerance of 0.0 creates an exact hull.
 	int convexHull(int count,cpVect *verts,cpVect *result,int *first,cpFloat tol){
 		return cpConvexHull(count,verts,result,first,tol);
-}
-
-	int collideShapes(const cpShape *a,const cpShape *b,cpContact *arr){
-		return cpCollideShapes(a,b,arr);
-}
-
-	void loopIndexes(cpVect *verts,int count,int *start,int *end){
-		cpLoopIndexes(verts,count,start,end);
-}
-
-/// Return the max of two cpFloats.
-	cpFloat fmax(cpFloat a,cpFloat b){
-		return cpfmax(a,b);
-}
-
-/// Return the min of two cpFloats.
-	cpFloat fmin(cpFloat a,cpFloat b){
-		return cpfmin(a,b);
-}
-
-/// Return the absolute value of a cpFloat.
-	cpFloat fabs(cpFloat f){
-		return cpfabs(f);
-}
-
-/// Clamp @c f to be between @c min and @c max.
-	cpFloat fclamp(cpFloat f,cpFloat min,cpFloat max){
-		return cpfclamp(f,min,max);
-}
-
-/// Clamp @c f to be between 0 and 1.
-	cpFloat fclamp01(cpFloat f){
-		return cpfclamp01(f);
-}
-
-/// Linearly interpolate (or extrapolate) between @c f1 and @c f2 by @c t percent.
-	cpFloat flerp(cpFloat f1,cpFloat f2,cpFloat t){
-		return cpflerp(f1,f2,t);
-}
-
-/// Linearly interpolate from @c f1 to @c f2 by no more than @c d.
-	cpFloat flerpconst(cpFloat f1,cpFloat f2,cpFloat d){
-		return cpflerpconst(f1,f2,d);
 }
 
 /// Check that a set of vertexes is convex and has a clockwise winding.

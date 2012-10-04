@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #pragma once
 
@@ -13,7 +13,7 @@ namespace cp {
 /// Body/shape iterator callback function type. 
 	typedef std::function<void (cp::Body *,cp::Shape *)> BodyShapeIteratorFunc ;
 /// Body/constraint iterator callback function type. 
-	typedef std::function<void (cp::Body *,cpConstraint *)> BodyConstraintIteratorFunc ;
+	typedef std::function<void (cp::Body *,cp::Constraint *)> BodyConstraintIteratorFunc ;
 /// Body/arbiter iterator callback function type. 
 	typedef std::function<void (cp::Body *,cp::Arbiter *)> BodyArbiterIteratorFunc ;
 
@@ -27,9 +27,6 @@ public:
 	cpBody* get(){
 		return body;
 }
-	void addShape(cpShape *shape);
-	void removeShape(cpShape *shape);
-	void removeConstraint(cpConstraint *constraint);
 /// Allocate and initialize a cpBody.
 	Body(cpFloat m,cpFloat i);
 /// Allocate and initialize a static cpBody.

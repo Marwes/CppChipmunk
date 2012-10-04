@@ -1,26 +1,34 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 21:25:36.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #pragma once
 //Forward declarations
 namespace cp{
+	class Constraint;
 	class Arbiter;
+	class PivotJoint;
 	class BBTree;
-	class Array;
-	class HashSet;
-	class Space;
-	class Contact;
 	class Body;
-	class SpatialIndex;
 	class SpaceHash;
-	class BB;
 	class Shape;
+	class PinJoint;
+	class GearJoint;
+	class Sweep1D;
+	class SimpleMotor;
+	class DampedRotarySpring;
+	class SpatialIndex;
+	class RatchetJoint;
+	class BB;
+	class RotaryLimitJoint;
 	class Vect;
+	class SlideJoint;
+	class DampedSpring;
 	class SegmentShape;
 	class PolyShape;
+	class GrooveJoint;
+	class Space;
 	class CircleShape;
-	class Sweep1D;
 }
 

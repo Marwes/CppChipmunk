@@ -1,16 +1,17 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/03/12 22:41:26.
+ * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
  */
 #include "Body.hpp"
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
-#include "Space.hpp"
-#include "Arbiter.hpp"
-#include <functional>
-#include "Vect.hpp"
 #include "Shape.hpp"
+#include <functional>
+#include "Arbiter.hpp"
+#include "Space.hpp"
+#include "Vect.hpp"
+#include "Constraint.hpp"
 #include "Body.hpp"
 
 class Body;
@@ -22,18 +23,6 @@ namespace {
 
 namespace cp {
 
-void Body::addShape(cpShape *shape)
-{
-		cpBodyAddShape(body,shape ? shape->get() : 0);
-}
-void Body::removeShape(cpShape *shape)
-{
-		cpBodyRemoveShape(body,shape ? shape->get() : 0);
-}
-void Body::removeConstraint(cpConstraint *constraint)
-{
-		cpBodyRemoveConstraint(body,constraint);
-}
 Body::Body(cpFloat m,cpFloat i)
 	: body(cpBodyNew(m,i)),
 	  data(0)
@@ -255,7 +244,7 @@ namespace {
 
 	void BodyEachConstraint(cpBody *body,cpConstraint *constraint,void *data)
 	{
-				(*reinterpret_cast<std::function<void (cp::Body *,cpConstraint *)> *>(data))((cp::Body *)body->data,constraint);
+				(*reinterpret_cast<std::function<void (cp::Body *,cp::Constraint *)> *>(data))((cp::Body *)body->data,(cp::Constraint *)constraint->data);
 	}
 
 	void BodyEachArbiter(cpBody *body,cpArbiter *arbiter,void *data)
