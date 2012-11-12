@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "SpaceHash.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "SpatialIndex.hpp"
@@ -18,5 +19,11 @@ SpaceHash::SpaceHash(cpFloat celldim,int cells,cpSpatialIndexBBFunc bbfunc,cp::S
 void SpaceHash::resize(cpFloat celldim,int numcells)
 {
 		cpSpaceHashResize(hash,celldim,numcells);
+}
+SpaceHash::SpaceHash(SpaceHash&&o)
+	: hash(o.hash),
+	  SpatialIndex(std::move(o))
+{
+				o.hash = 0;
 }
 };//namespace cp

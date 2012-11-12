@@ -1,10 +1,11 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:01:44.
  */
 #pragma once
 
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 
@@ -58,6 +59,10 @@ public:
 	cp::Vect getSurfaceVelocity(void);
 	void setSurfaceVelocity(cp::Vect value);
 	Arbiter(cpArbiter* v);
+	Arbiter(Arbiter&&o);
+private:
+//Hiding copy constructor and assignmentArbiter(const Arbiter&);
+Arbiter& operator=(const Arbiter&);
 
 };
 };//namespace cp

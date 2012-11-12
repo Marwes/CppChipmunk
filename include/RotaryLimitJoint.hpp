@@ -1,10 +1,11 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
  */
 #pragma once
 
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
@@ -25,6 +26,10 @@ public:
 	void setMin(cpFloat value);
 	cpFloat getMax(void);
 	void setMax(cpFloat value);
+	RotaryLimitJoint(RotaryLimitJoint&&o);
+private:
+//Hiding copy constructor and assignmentRotaryLimitJoint(const RotaryLimitJoint&);
+RotaryLimitJoint& operator=(const RotaryLimitJoint&);
 
 };
 };//namespace cp

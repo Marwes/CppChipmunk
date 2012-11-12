@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "SegmentShape.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Shape.hpp"
@@ -36,5 +37,11 @@ cp::Vect SegmentShape::getNormal(void)
 cpFloat SegmentShape::getRadius(void)
 {
 		return cpSegmentShapeGetRadius(shape);
+}
+SegmentShape::SegmentShape(SegmentShape&&o)
+	: segmentshape(o.segmentshape),
+	  Shape(std::move(o))
+{
+				o.segmentshape = 0;
 }
 };//namespace cp

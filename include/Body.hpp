@@ -1,10 +1,11 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
  */
 #pragma once
 
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include <functional>
@@ -18,11 +19,10 @@ namespace cp {
 	typedef std::function<void (cp::Body *,cp::Arbiter *)> BodyArbiterIteratorFunc ;
 
 class Body {
+friend class Space;
 protected:
 	cpBody* body;
 	cpDataPointer data;
-	friend class  cp::Space;
-;
 public:
 	inline cpBody* get(){
 		return body;
@@ -105,6 +105,10 @@ public:
 	cpDataPointer getUserData(void);
 	void setUserData(cpDataPointer value);
 	Body(cpBody* v);
+	Body(Body&&o);
+private:
+//Hiding copy constructor and assignmentBody(const Body&);
+Body& operator=(const Body&);
 
 };
 };//namespace cp

@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "Shape.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Space.hpp"
@@ -125,5 +126,12 @@ Shape::Shape(cpShape* v)
 		shape = v;
 		data = v->data;
 		v->data = this;
+}
+Shape::Shape(Shape&&o)
+	: shape(o.shape),
+	  data(o.data)
+{
+				o.shape = 0;
+		o.data = 0;
 }
 };//namespace cp

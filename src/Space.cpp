@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:20:32.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "Space.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include <unordered_map>
@@ -326,6 +327,16 @@ Space::Space(cpSpace* v)
 		space = v;
 		data = v->data;
 		v->data = this;
+}
+Space::Space(Space&&o)
+	: space(o.space),
+	  data(o.data),
+	  body(o.body),
+	  collisionHandlers(std::move(o.collisionHandlers))
+{
+				o.space = 0;
+		o.data = 0;
+		o.body = 0;
 }
 };//namespace cp
 namespace {

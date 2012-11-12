@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "Constraint.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Space.hpp"
@@ -92,5 +93,12 @@ Constraint::Constraint(cpConstraint* v)
 		constraint = v;
 		data = v->data;
 		v->data = this;
+}
+Constraint::Constraint(Constraint&&o)
+	: constraint(o.constraint),
+	  data(o.data)
+{
+				o.constraint = 0;
+		o.data = 0;
 }
 };//namespace cp

@@ -1,10 +1,11 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:01:44.
  */
 #pragma once
 
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 
@@ -40,6 +41,10 @@ public:
 	cpDataPointer getUserData(void);
 	void setUserData(cpDataPointer value);
 	Constraint(cpConstraint* v);
+	Constraint(Constraint&&o);
+private:
+//Hiding copy constructor and assignmentConstraint(const Constraint&);
+Constraint& operator=(const Constraint&);
 
 };
 };//namespace cp

@@ -1,10 +1,11 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
  */
 #pragma once
 
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
@@ -29,6 +30,10 @@ public:
 	cp::Vect getGrooveB(void);
 	cp::Vect getAnchr2(void);
 	void setAnchr2(cp::Vect value);
+	GrooveJoint(GrooveJoint&&o);
+private:
+//Hiding copy constructor and assignmentGrooveJoint(const GrooveJoint&);
+GrooveJoint& operator=(const GrooveJoint&);
 
 };
 };//namespace cp

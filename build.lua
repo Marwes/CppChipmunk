@@ -588,8 +588,9 @@ function buildTypes( text )
 		end
 
 		local includes = {
+			"#include <utility>\n",
 			"#include \"chipmunk.h\"\n",
-			"#include \"chipmunk_declarations.hpp\"\n" 
+			"#include \"chipmunk_declarations.hpp\"\n",
 		}
 
 		--Hacked in to let Vect and BB not be pointers
@@ -613,9 +614,7 @@ function buildTypes( text )
 		if structName == "cpSpace" then --We add a cp::Body* as well for the static body
 			table.insert(members, {name="body", type=namespace.."::Body*"})
 		end
-		if structName == "cpBody" then
-			table.insert(members, {name=namespace.."::Space;\n", type="friend class "})
-		end
+		
 
 		local hasMethods = text:find("%w+%s*"..structName.."[_%w]+%s*%(")
 		--Construct from a pointer to a cpStruct
@@ -658,7 +657,8 @@ function buildTypes( text )
 
 	if not classes["cpVect"] then
 		local includes = {
-			"#include \"chipmunk.h\"\n"
+			"#include <utility>\n",
+			"#include \"chipmunk.h\"\n",
 		}
 		classes["cpVect"] = Class:new(
 			{structName="cpVect", name="Vect", text=classText,

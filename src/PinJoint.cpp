@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "PinJoint.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
@@ -44,5 +45,11 @@ cpFloat PinJoint::getDist(void)
 void PinJoint::setDist(cpFloat value)
 {
 		cpPinJointSetDist(constraint,value);
+}
+PinJoint::PinJoint(PinJoint&&o)
+	: pinjoint(o.pinjoint),
+	  Constraint(std::move(o))
+{
+				o.pinjoint = 0;
 }
 };//namespace cp

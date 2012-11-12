@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "SlideJoint.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
@@ -52,5 +53,11 @@ cpFloat SlideJoint::getMax(void)
 void SlideJoint::setMax(cpFloat value)
 {
 		cpSlideJointSetMax(constraint,value);
+}
+SlideJoint::SlideJoint(SlideJoint&&o)
+	: slidejoint(o.slidejoint),
+	  Constraint(std::move(o))
+{
+				o.slidejoint = 0;
 }
 };//namespace cp

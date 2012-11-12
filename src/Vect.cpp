@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 12:28:32.
  */
 #include "Vect.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "Vect.hpp"
 
@@ -17,112 +18,116 @@ Vect::Vect(const cpFloat x,const cpFloat y)
 {
 		this->x = x; this->y = y;
 }
-cp::Vect Vect::slerp(Vect& v2,const cpFloat t)
+cp::Vect Vect::slerp(Vect& v2,const cpFloat t) const
 {
 		return cpvslerp(*this,v2,t);
 }
-cp::Vect Vect::slerpconst(Vect& v2,const cpFloat a)
+cp::Vect Vect::slerpconst(Vect& v2,const cpFloat a) const
 {
 		return cpvslerpconst(*this,v2,a);
 }
-char* Vect::str()
+char* Vect::str() const
 {
 		return cpvstr(*this);
 }
-cpBool Vect::eql(Vect& v2)
+cpBool Vect::operator==(const Vect& v2) const
 {
 		return cpveql(*this,v2);
 }
-cp::Vect Vect::add(Vect& v2)
+cp::Vect Vect::operator+(const Vect& v2) const
 {
 		return cpvadd(*this,v2);
 }
-cp::Vect Vect::sub(Vect& v2)
+cp::Vect Vect::operator-(const Vect& v2) const
 {
 		return cpvsub(*this,v2);
 }
-cp::Vect Vect::neg()
+cp::Vect Vect::operator-() const
 {
 		return cpvneg(*this);
 }
-cp::Vect Vect::mult(const cpFloat s)
+cp::Vect Vect::operator*(cpFloat s) const
 {
 		return cpvmult(*this,s);
 }
-cpFloat Vect::dot(Vect& v2)
+cpFloat Vect::dot(Vect& v2) const
 {
 		return cpvdot(*this,v2);
 }
-cpFloat Vect::cross(Vect& v2)
+cpFloat Vect::cross(Vect& v2) const
 {
 		return cpvcross(*this,v2);
 }
-cp::Vect Vect::perp()
+cp::Vect Vect::perp() const
 {
 		return cpvperp(*this);
 }
-cp::Vect Vect::rperp()
+cp::Vect Vect::rperp() const
 {
 		return cpvrperp(*this);
 }
-cp::Vect Vect::project(Vect& v2)
+cp::Vect Vect::project(Vect& v2) const
 {
 		return cpvproject(*this,v2);
 }
-cp::Vect Vect::forangle(const cpFloat a)
+cp::Vect Vect::forangle(const cpFloat a) const
 {
 		return cpvforangle(a);
 }
-cpFloat Vect::toangle()
+cpFloat Vect::toangle() const
 {
 		return cpvtoangle(*this);
 }
-cp::Vect Vect::rotate(Vect& v2)
+cp::Vect Vect::rotate(Vect& v2) const
 {
 		return cpvrotate(*this,v2);
 }
-cp::Vect Vect::unrotate(Vect& v2)
+cp::Vect Vect::unrotate(Vect& v2) const
 {
 		return cpvunrotate(*this,v2);
 }
-cpFloat Vect::lengthsq()
+cpFloat Vect::lengthsq() const
 {
 		return cpvlengthsq(*this);
 }
-cpFloat Vect::length()
+cpFloat Vect::length() const
 {
 		return cpvlength(*this);
 }
-cp::Vect Vect::lerp(Vect& v2,const cpFloat t)
+cp::Vect Vect::lerp(Vect& v2,const cpFloat t) const
 {
 		return cpvlerp(*this,v2,t);
 }
-cp::Vect Vect::normalize()
+cp::Vect Vect::normalize() const
 {
 		return cpvnormalize(*this);
 }
-cp::Vect Vect::normalize_safe()
+cp::Vect Vect::normalize_safe() const
 {
 		return cpvnormalize_safe(*this);
 }
-cp::Vect Vect::clamp(const cpFloat len)
+cp::Vect Vect::clamp(const cpFloat len) const
 {
 		return cpvclamp(*this,len);
 }
-cp::Vect Vect::lerpconst(Vect& v2,cpFloat d)
+cp::Vect Vect::lerpconst(Vect& v2,cpFloat d) const
 {
 		return cpvlerpconst(*this,v2,d);
 }
-cpFloat Vect::dist(Vect& v2)
+cpFloat Vect::dist(Vect& v2) const
 {
 		return cpvdist(*this,v2);
 }
-cpFloat Vect::distsq(Vect& v2)
+cpFloat Vect::distsq(Vect& v2) const
 {
 		return cpvdistsq(*this,v2);
 }
-cpBool Vect::near(Vect& v2,const cpFloat dist)
+cpBool Vect::near(Vect& v2,const cpFloat dist) const
 {
 		return cpvnear(*this,v2,dist);
 }
+Vect::Vect(Vect&&o)
+	: cpVect(std::move(o))
+{
+		}
 };//namespace cp

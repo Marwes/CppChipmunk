@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "Sweep1D.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "SpatialIndex.hpp"
@@ -15,4 +16,10 @@ Sweep1D::Sweep1D(cpSpatialIndexBBFunc bbfunc,cp::SpatialIndex *staticIndex)
 	: SpatialIndex(cpSweep1DNew(bbfunc,staticIndex ? staticIndex->get() : 0))
 {
 		}
+Sweep1D::Sweep1D(Sweep1D&&o)
+	: sweep1d(o.sweep1d),
+	  SpatialIndex(std::move(o))
+{
+				o.sweep1d = 0;
+}
 };//namespace cp

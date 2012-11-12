@@ -15,6 +15,9 @@ end
 function Method:makeDeclaration()
 	local out = "\t".. (self.inline and "inline " or "")
 	out = out..self.returnType..self.name.."(".. makeRawParameters(self.parameters, true)..")"
+	if self.const then
+		out = out.. " const"
+	end
 	if self.inline then
 		out = out..self:makeMethodBody()
 	else
@@ -29,7 +32,12 @@ end
 function Method:makeDefinition( )
 	if self.inline then return "" end
 
-	local out = self.returnType..self.class.name.."::"..self.name.."("..makeRawParameters(self.parameters)..")\n"
+	local out = self.returnType..self.class.name.."::"..self.name.."("..makeRawParameters(self.parameters)..")"
+	if self.const then
+		out = out.." const"
+	end
+	out = out.."\n"
+	
 	if self.initializerList and #self.initializerList > 0 then
 		for _,v in ipairs(self.initializerList) do
 			if _ == 1 then
@@ -65,7 +73,6 @@ Class.__index = Class
 function Class:new(tab)
 	local structName = tab.structName
 
-
 	tab.name =  tab.name or ""
 	tab.text =  tab.text or ""
 	tab.member =  tab.member or ""
@@ -78,13 +85,12 @@ function Class:new(tab)
 	tab.hasDataPointer =  tab.hasDataPointer
 	tab.constructors =  tab.constructors or ""
 	tab.parent =  tab.parent
-
-
-
 	tab.methods = tab.methods or {}
+
 	for k,v in pairs(tab.methods) do
 		v.class = tab
 	end
+
 	setmetatable(tab, self)
 	return tab
 end
@@ -115,6 +121,49 @@ function Class:makeMethodDefinitions( )
 	return out
 end
 
+
+function Class:addMoveConstructor()
+	local initializerList = {}
+
+	if self.members then
+		for _,member in ipairs(self.members) do
+			if member.type:find("%*") or member.type == "cpDataPointer" then
+				table.insert(initializerList,{
+					lvalue=member.name,
+					rvalue="o."..member.name
+					})
+			else
+				table.insert(initializerList,{
+					lvalue=member.name,
+					rvalue="std::move(o."..member.name..")"
+					})
+			end
+		end
+		if self.parent then
+			table.insert(initializerList,{
+				lvalue=self:getParentName(),
+				rvalue="std::move(o)"
+				})
+		end
+	end
+	local body = ""
+	if self.members then
+		for _,member in ipairs(self.members) do
+			if member.type:find("%*") or member.type == "cpDataPointer" then
+				body = body.."\t\to."..member.name.." = 0;\n"
+			end
+		end
+	end
+	out = out.."\t}\n"
+
+	self:addMethod(Method:new({
+			returnType="", name=self.name, 
+			body=body, parameters={{name="o", type=self.name.."&&"}},
+			initializerList=initializerList
+		}))
+	return out
+end
+
 function Class:makeClassBody( )
 	local out = "class "..self.name
 	if type(self.parent) == "string" then 
@@ -123,6 +172,11 @@ function Class:makeClassBody( )
 		out = out.." : public "..self.parent.name
 	end
 	out = out.." {\n"
+
+	if self.name == "Body" then
+		out = out.."friend class Space;\n"
+	end
+
 	out = out.."protected:\n"
 	if self.members then
 		for _,member in ipairs(self.members) do
@@ -131,8 +185,17 @@ function Class:makeClassBody( )
 	end
 	out = out.."public:\n"
 
+	self:addMoveConstructor()
+
 	for _, method in ipairs(self.methods) do
 		out = out..method:makeDeclaration()
+	end
+
+	out = out.."private:\n"
+	out = out.."//Hiding copy constructor and assignment"
+	if self.name ~= "Vect" and self.name ~= "BB" then
+		out = out..self.name.."(const "..self.name.."&);\n"
+		out = out..self.name.."& operator=(const "..self.name.."&);\n"
 	end
 
 	out = out.."\n"
@@ -168,4 +231,12 @@ function Class:makeIncludes()
 		end
 	end
 	return out.."\n"
+end
+
+function Class:getParentName()
+	if type(self.parent) == "string" then 
+		return self.parent
+	elseif self.parent then
+		return self.parent.name
+	end
 end

@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "RatchetJoint.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Constraint.hpp"
@@ -43,5 +44,11 @@ cpFloat RatchetJoint::getRatchet(void)
 void RatchetJoint::setRatchet(cpFloat value)
 {
 		cpRatchetJointSetRatchet(constraint,value);
+}
+RatchetJoint::RatchetJoint(RatchetJoint&&o)
+	: ratchetjoint(o.ratchetjoint),
+	  Constraint(std::move(o))
+{
+				o.ratchetjoint = 0;
 }
 };//namespace cp

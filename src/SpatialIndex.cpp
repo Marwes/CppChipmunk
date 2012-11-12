@@ -1,9 +1,10 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:19:55.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
  */
 #include "SpatialIndex.hpp"
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include <functional>
@@ -93,6 +94,11 @@ void SpatialIndex::reindexQuery(SpatialIndexQueryFunc func)
 SpatialIndex::SpatialIndex(cpSpatialIndex* v)
 {
 		index = v;
+}
+SpatialIndex::SpatialIndex(SpatialIndex&&o)
+	: index(o.index)
+{
+				o.index = 0;
 }
 };//namespace cp
 namespace {

@@ -1,10 +1,11 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
+ * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
  */
 #pragma once
 
+#include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
 #include "Shape.hpp"
@@ -25,6 +26,10 @@ public:
 	cp::Vect getB(void);
 	cp::Vect getNormal(void);
 	cpFloat getRadius(void);
+	SegmentShape(SegmentShape&&o);
+private:
+//Hiding copy constructor and assignmentSegmentShape(const SegmentShape&);
+SegmentShape& operator=(const SegmentShape&);
 
 };
 };//namespace cp

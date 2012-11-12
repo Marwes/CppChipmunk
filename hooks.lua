@@ -13,7 +13,7 @@ functionHooks = {
 			local class = classes[struct]
 			table.insert(class.members, {
 				type="std::unordered_map<std::pair<cpCollisionType, cpCollisionType>,CollisionHandler, HashFunctor> ",
-				name="collisionHandlers;"
+				name="collisionHandlers"
 			})
 			table.insert(class.includes, "#include <unordered_map>\n")
 
@@ -336,11 +336,11 @@ functionHooks = {
 		if functionName:find("^cpv") then
 			local methodName, struct = functionName:gsub("cpv", ""), "cpVect"
 			local operatorMap = {
-				add={op="+", args="Vect& other"},
-				mult={op="*", args="Vect& other"},
-				sub={op="-", args="Vect& other"},
+				add={op="+", args="const Vect& "},
+				mult={op="*", args="cpFloat "},
+				sub={op="-", args="const Vect& "},
 				neg={op="-", args="void"},
-				eql={op="==", args="Vect& other"}
+				eql={op="==", args="const Vect& "}
 			}
 
 
@@ -365,14 +365,20 @@ functionHooks = {
 
 			local argString = makeRawArguments(args, struct, true)
 			local body = ""
+			local const = true
 
 			if operatorMap[methodName] then
-				local op = operatorMap[methodName].op
+				local op = operatorMap[methodName]
+				methodName = "operator"..op.op
+				if argTable[1] then
+					argTable[1].type = op.args
+				end
 				body = returnIfNotVoid..functionName.."("..argString..");\n"
 			elseif methodName ~= "" then
 				body = returnIfNotVoid..functionName.."("..argString..");\n"
 			else --Methodname is "" meaning it is the constructor 'cpv'
 				
+				const = false
 				methodName = "Vect"
 				returnType = ""
 				argTable[1].default = 0
@@ -388,7 +394,13 @@ functionHooks = {
 					}))
 			end
 
-			return Method:new({ returnType=returnType, name=methodName, body=body, parameters=argTable}), struct
+			return Method:new({ 
+				returnType=returnType, 
+				name=methodName, 
+				body=body, 
+				parameters=argTable,
+				const=const})
+			, struct
 		end
 	end
 	,
