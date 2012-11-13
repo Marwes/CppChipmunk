@@ -192,7 +192,7 @@ function Class:makeClassBody( )
 	end
 
 	out = out.."private:\n"
-	out = out.."//Hiding copy constructor and assignment"
+	out = out.."//Hiding copy constructor and assignment\n"
 	if self.name ~= "Vect" and self.name ~= "BB" then
 		out = out..self.name.."(const "..self.name.."&);\n"
 		out = out..self.name.."& operator=(const "..self.name.."&);\n"
