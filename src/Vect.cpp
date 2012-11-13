@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:11:26 2012.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 23:23:23.
  */
 #include "Vect.hpp"
 #include <utility>
@@ -130,8 +130,4 @@ cpBool Vect::near(Vect& v2,const cpFloat dist) const
 {
 		return cpvnear(*this,v2,dist);
 }
-Vect::Vect(Vect&&o)
-	: cpVect(std::move(o))
-{
-		}
 };//namespace cp

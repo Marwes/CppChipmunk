@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 23:23:23.
  */
 #pragma once
 
@@ -75,7 +75,6 @@ public:
 	cpFloat distsq(Vect& v2) const;
 /// Returns true if the distance between v1 and v2 is less than dist.
 	cpBool near(Vect& v2,const cpFloat dist) const;
-	Vect(Vect&&o);
 private:
 //Hiding copy constructor and assignment
 

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:14:39 2012.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 23:23:23.
  */
 #include "BB.hpp"
 #include <utility>
@@ -68,7 +68,4 @@ cp::Vect BB::wrapVect(const cp::Vect& v)
 {
 		return cpBBWrapVect(*this,v);
 }
-BB::BB(BB&&o)
-{
-		}
 };//namespace cp

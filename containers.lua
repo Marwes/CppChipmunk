@@ -153,7 +153,6 @@ function Class:addMoveConstructor()
 				body = body.."\t\to."..member.name.." = 0;\n"
 			end
 		end
-
 	end
 	if self.hasDataPointer then
 		body = body.."\t\tget()->data = this;\n"
@@ -187,7 +186,9 @@ function Class:makeClassBody( )
 	end
 	out = out.."public:\n"
 
-	self:addMoveConstructor()
+	if self.name ~= "BB" and self.name ~= "Vect" then
+		self:addMoveConstructor()
+	end
 
 	for _, method in ipairs(self.methods) do
 		out = out..method:makeDeclaration()

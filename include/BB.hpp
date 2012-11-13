@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 23:23:23.
  */
 #pragma once
 
@@ -41,7 +41,6 @@ public:
 // TODO edge case issue
 /// Wrap a vector to a bounding box.
 	cp::Vect wrapVect(const cp::Vect& v);
-	BB(BB&&o);
 private:
 //Hiding copy constructor and assignment
 
