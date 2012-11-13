@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:09:15 2012.
  */
 #include "Body.hpp"
 #include <utility>
@@ -76,7 +76,7 @@ void Body::setMoment(cpFloat i)
 {
 		cpBodySetMoment(body,i);
 }
-void Body::setPos(cp::Vect pos)
+void Body::setPos(const cp::Vect& pos)
 {
 		cpBodySetPos(body,pos);
 }
@@ -84,7 +84,7 @@ void Body::setAngle(cpFloat a)
 {
 		cpBodySetAngle(body,a);
 }
-void Body::updateVelocity(cp::Vect gravity,cpFloat damping,cpFloat dt)
+void Body::updateVelocity(const cp::Vect& gravity,cpFloat damping,cpFloat dt)
 {
 		cpBodyUpdateVelocity(body,gravity,damping,dt);
 }
@@ -92,11 +92,11 @@ void Body::updatePosition(cpFloat dt)
 {
 		cpBodyUpdatePosition(body,dt);
 }
-cp::Vect Body::local2World(const cp::Vect v)
+cp::Vect Body::local2World(const cp::Vect& v)
 {
 		return cpBodyLocal2World(body,v);
 }
-cp::Vect Body::world2Local(const cp::Vect v)
+cp::Vect Body::world2Local(const cp::Vect& v)
 {
 		return cpBodyWorld2Local(body,v);
 }
@@ -104,19 +104,19 @@ void Body::resetForces()
 {
 		cpBodyResetForces(body);
 }
-void Body::applyForce(const cp::Vect f,const cp::Vect r)
+void Body::applyForce(const cp::Vect& f,const cp::Vect& r)
 {
 		cpBodyApplyForce(body,f,r);
 }
-void Body::applyImpulse(const cp::Vect j,const cp::Vect r)
+void Body::applyImpulse(const cp::Vect& j,const cp::Vect& r)
 {
 		cpBodyApplyImpulse(body,j,r);
 }
-cp::Vect Body::getVelAtWorldPoint(cp::Vect point)
+cp::Vect Body::getVelAtWorldPoint(const cp::Vect& point)
 {
 		return cpBodyGetVelAtWorldPoint(body,point);
 }
-cp::Vect Body::getVelAtLocalPoint(cp::Vect point)
+cp::Vect Body::getVelAtLocalPoint(const cp::Vect& point)
 {
 		return cpBodyGetVelAtLocalPoint(body,point);
 }
@@ -169,7 +169,7 @@ cp::Vect Body::getVel(void)
 {
 		return cpBodyGetVel(body);
 }
-void Body::setVel(cp::Vect value)
+void Body::setVel(const cp::Vect&  value)
 {
 		cpBodySetVel(body,value);
 }
@@ -177,7 +177,7 @@ cp::Vect Body::getForce(void)
 {
 		return cpBodyGetForce(body);
 }
-void Body::setForce(cp::Vect value)
+void Body::setForce(const cp::Vect&  value)
 {
 		cpBodySetForce(body,value);
 }

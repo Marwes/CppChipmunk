@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -25,14 +25,15 @@ public:
 /// Allocate and initialize a box shaped polygon shape.
 	PolyShape(cp::Body *body,cpFloat width,cpFloat height);
 /// Allocate and initialize an offset box shaped polygon shape.
-	PolyShape(cp::Body *body,cp::BB box);
+	PolyShape(cp::Body *body,const cp::BB& box);
 /// Get the number of verts in a polygon shape.
 	int getNumVerts();
 /// Get the @c ith vertex of a polygon shape.
 	cp::Vect getVert(int idx);
 	PolyShape(PolyShape&&o);
 private:
-//Hiding copy constructor and assignmentPolyShape(const PolyShape&);
+//Hiding copy constructor and assignment
+PolyShape(const PolyShape&);
 PolyShape& operator=(const PolyShape&);
 
 };

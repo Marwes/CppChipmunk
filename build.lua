@@ -450,7 +450,7 @@ function makeArguments(tab, struct, makeFirstArgThisOrMemberIsThis)
 				end
 			elseif v.name == "" then
 				out = out.."get(),"
-			elseif v.type:find(toCppType("cpBB")) or v.type:find(toCppType("cpVect")) then
+			elseif v.type:find(toCppType("cpBB")) or v.type:find(toCppType("cpVect")) and not v.type:find("%*") then
 				out = out..v.name..","
 			else
 				out = out..v.name.." ? "..v.name.."->get() : 0,"
@@ -475,7 +475,13 @@ end
 function toCppTypes( tab )
 	for _,v in ipairs(tab) do
 		if classes[toRawStruct(v.type)] and classes[toRawStruct(v.type)].hasMethods then
-			v.type = toCppType(v.type)
+			if v.type:find("cpVect") and not v.type:find("%*") then
+				v.type = "const "..getNamespace().."Vect& "
+			elseif v.type:find("cpBB") and not v.type:find("%*") then
+				v.type = "const "..getNamespace().."BB& "
+			else
+				v.type = toCppType(v.type)
+			end
 		end
 	end
 end
@@ -532,12 +538,12 @@ function makeCppMethod(returnType, functionName, argTable )
 		end
 	end
 
+	toCppTypes(argTable)
 	addGetCall(tab, struct)
 	makeFirstArgThisOrMember(tab, struct)
 	local argString = makeRawArguments(tab, struct, true)
 	table.remove(tab, 1)
 	table.remove(argTable, 1)
-	toCppTypes(argTable)
 
 	
 	local body = functionName.."("..argString..")"
@@ -646,7 +652,6 @@ function buildTypes( text )
 
 	matchAll(typedefPattern, text,
 		function ( b, comment, returnType, name, argTable,e)
-			print(name)
 			functionTypedefs[name] = {
 				comment=comment,
 				returnType= returnType,
@@ -678,7 +683,13 @@ function buildTypes( text )
 				name="BB",
 				body="l = v.l; t = v.t; r = v.r; b = v.b;\n",
 				returnType="",
-				parameters= {{type="const cpBB ", name="v"}}
+				parameters= {{type="const cpBB& ", name="v"}}
+			}))
+		classes.cpBB:addMethod(	Method:new({		
+				name="BB",
+				body="l = v.l; t = v.t; r = v.r; b = v.b;\n",
+				returnType="",
+				parameters= {{type="const cp::BB& ", name="v"}}
 			}))
 		for k,v in ipairs(classes.cpBB.methods) do 
 			if v.name == "get" then
@@ -796,7 +807,11 @@ function parseText(text )
 				local body = "cp"..class.."Set"..name.."("..structMember..",value);\n"
 
 				if classes[toRawStruct(type)] then
-					type = toCppType(type)
+					if type:find("cpBB") or type:find("cpVect") then
+						type = "const "..toCppType(type).."& "
+					else
+						type = toCppType(type)
+					end
 				elseif toRawStruct(type) == "cpDataPointer" then
 					body = "data = value;\n"
 				end

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:09:15 2012.
  */
 #include "Space.hpp"
 #include <utility>
@@ -129,7 +129,7 @@ cpBool Space::addPostStepCallback(PostStepFunc func,void *key)
 {
 		return cpSpaceAddPostStepCallback(space,*SpaceAddPostStepCallback,key,&func);
 }
-void Space::pointQuery(cp::Vect point,cpLayers layers,cpGroup group,cpSpacePointQueryFunc func,void *data)
+void Space::pointQuery(const cp::Vect& point,cpLayers layers,cpGroup group,cpSpacePointQueryFunc func,void *data)
 {
 		cpSpacePointQuery(space,point,layers,group,func,data);
 }
@@ -137,12 +137,12 @@ void Space::pointQuery(cpVect point,cpLayers layers,cpGroup group,SpacePointQuer
 {
 		cpSpacePointQuery(space,point,layers,group,*SpacePointQuery,&func);
 }
-cp::Shape *Space::pointQueryFirst(cp::Vect point,cpLayers layers,cpGroup group)
+cp::Shape *Space::pointQueryFirst(const cp::Vect& point,cpLayers layers,cpGroup group)
 {
 		cpShape * temp = cpSpacePointQueryFirst(space,point,layers,group);
 		return static_cast<cp::Shape *>(temp ? temp->data : 0);
 }
-void Space::nearestPointQuery(cp::Vect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryFunc func,void *data)
+void Space::nearestPointQuery(const cp::Vect& point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryFunc func,void *data)
 {
 		cpSpaceNearestPointQuery(space,point,maxDistance,layers,group,func,data);
 }
@@ -150,12 +150,12 @@ void Space::nearestPointQuery(cpVect point,cpFloat maxDistance,cpLayers layers,c
 {
 		cpSpaceNearestPointQuery(space,point,maxDistance,layers,group,*SpaceNearestPointQuery,&func);
 }
-cp::Shape *Space::nearestPointQueryNearest(cp::Vect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpNearestPointQueryInfo *out)
+cp::Shape *Space::nearestPointQueryNearest(const cp::Vect& point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpNearestPointQueryInfo *out)
 {
 		cpShape * temp = cpSpaceNearestPointQueryNearest(space,point,maxDistance,layers,group,out);
 		return static_cast<cp::Shape *>(temp ? temp->data : 0);
 }
-void Space::segmentQuery(cp::Vect start,cp::Vect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryFunc func,void *data)
+void Space::segmentQuery(const cp::Vect& start,const cp::Vect& end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryFunc func,void *data)
 {
 		cpSpaceSegmentQuery(space,start,end,layers,group,func,data);
 }
@@ -163,12 +163,12 @@ void Space::segmentQuery(cpVect start,cpVect end,cpLayers layers,cpGroup group,S
 {
 		cpSpaceSegmentQuery(space,start,end,layers,group,*SpaceSegmentQuery,&func);
 }
-cp::Shape *Space::segmentQueryFirst(cp::Vect start,cp::Vect end,cpLayers layers,cpGroup group,cpSegmentQueryInfo *out)
+cp::Shape *Space::segmentQueryFirst(const cp::Vect& start,const cp::Vect& end,cpLayers layers,cpGroup group,cpSegmentQueryInfo *out)
 {
 		cpShape * temp = cpSpaceSegmentQueryFirst(space,start,end,layers,group,out);
 		return static_cast<cp::Shape *>(temp ? temp->data : 0);
 }
-void Space::BBQuery(cp::BB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryFunc func,void *data)
+void Space::BBQuery(const cp::BB& bb,cpLayers layers,cpGroup group,cpSpaceBBQueryFunc func,void *data)
 {
 		cpSpaceBBQuery(space,bb,layers,group,func,data);
 }
@@ -244,7 +244,7 @@ cp::Vect Space::getGravity(void)
 {
 		return cpSpaceGetGravity(space);
 }
-void Space::setGravity(cp::Vect value)
+void Space::setGravity(const cp::Vect&  value)
 {
 		cpSpaceSetGravity(space,value);
 }

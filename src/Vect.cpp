@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 12:28:32.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:11:26 2012.
  */
 #include "Vect.hpp"
 #include <utility>
@@ -11,6 +11,10 @@
 namespace cp {
 
 Vect::Vect(cpVect cv)
+{
+		this->x = cv.x; this->y = cv.y;
+}
+Vect::Vect(const cp::Vect& cv)
 {
 		this->x = cv.x; this->y = cv.y;
 }

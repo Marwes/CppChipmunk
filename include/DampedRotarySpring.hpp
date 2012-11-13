@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -32,7 +32,8 @@ public:
 	void setSpringTorqueFunc(cpDampedRotarySpringTorqueFunc value);
 	DampedRotarySpring(DampedRotarySpring&&o);
 private:
-//Hiding copy constructor and assignmentDampedRotarySpring(const DampedRotarySpring&);
+//Hiding copy constructor and assignment
+DampedRotarySpring(const DampedRotarySpring&);
 DampedRotarySpring& operator=(const DampedRotarySpring&);
 
 };

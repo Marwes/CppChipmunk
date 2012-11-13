@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:01:44.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -43,7 +43,8 @@ public:
 	Constraint(cpConstraint* v);
 	Constraint(Constraint&&o);
 private:
-//Hiding copy constructor and assignmentConstraint(const Constraint&);
+//Hiding copy constructor and assignment
+Constraint(const Constraint&);
 Constraint& operator=(const Constraint&);
 
 };

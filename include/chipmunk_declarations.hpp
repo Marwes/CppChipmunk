@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 19:56:58.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 21:59:52.
  */
 #pragma once
 //Forward declarations

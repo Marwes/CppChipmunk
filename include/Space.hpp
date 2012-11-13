@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -103,22 +103,22 @@ public:
 /// Returns true only if @c key has never been scheduled before.
 /// It's possible to pass @c NULL for @c func if you only want to mark @c key as being used.
 	cpBool addPostStepCallback(PostStepFunc func,void *key);
-	void pointQuery(cp::Vect point,cpLayers layers,cpGroup group,cpSpacePointQueryFunc func,void *data);
+	void pointQuery(const cp::Vect& point,cpLayers layers,cpGroup group,cpSpacePointQueryFunc func,void *data);
 /// Query the space at a point and call @c func for each shape found.
 	void pointQuery(cpVect point,cpLayers layers,cpGroup group,SpacePointQueryFunc func);
 /// Query the space at a point and return the first shape found. Returns NULL if no shapes were found.
-	cp::Shape *pointQueryFirst(cp::Vect point,cpLayers layers,cpGroup group);
-	void nearestPointQuery(cp::Vect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryFunc func,void *data);
+	cp::Shape *pointQueryFirst(const cp::Vect& point,cpLayers layers,cpGroup group);
+	void nearestPointQuery(const cp::Vect& point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpSpaceNearestPointQueryFunc func,void *data);
 /// Query the space at a point and call @c func for each shape found.
 	void nearestPointQuery(cpVect point,cpFloat maxDistance,cpLayers layers,cpGroup group,SpaceNearestPointQueryFunc func);
 /// Query the space at a point and return the nearest shape found. Returns NULL if no shapes were found.
-	cp::Shape *nearestPointQueryNearest(cp::Vect point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpNearestPointQueryInfo *out);
-	void segmentQuery(cp::Vect start,cp::Vect end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryFunc func,void *data);
+	cp::Shape *nearestPointQueryNearest(const cp::Vect& point,cpFloat maxDistance,cpLayers layers,cpGroup group,cpNearestPointQueryInfo *out);
+	void segmentQuery(const cp::Vect& start,const cp::Vect& end,cpLayers layers,cpGroup group,cpSpaceSegmentQueryFunc func,void *data);
 /// Perform a directed line segment query (like a raycast) against the space calling @c func for each shape intersected.
 	void segmentQuery(cpVect start,cpVect end,cpLayers layers,cpGroup group,SpaceSegmentQueryFunc func);
 /// Perform a directed line segment query (like a raycast) against the space and return the first shape hit. Returns NULL if no shapes were hit.
-	cp::Shape *segmentQueryFirst(cp::Vect start,cp::Vect end,cpLayers layers,cpGroup group,cpSegmentQueryInfo *out);
-	void BBQuery(cp::BB bb,cpLayers layers,cpGroup group,cpSpaceBBQueryFunc func,void *data);
+	cp::Shape *segmentQueryFirst(const cp::Vect& start,const cp::Vect& end,cpLayers layers,cpGroup group,cpSegmentQueryInfo *out);
+	void BBQuery(const cp::BB& bb,cpLayers layers,cpGroup group,cpSpaceBBQueryFunc func,void *data);
 /// Perform a fast rectangle query on the space calling @c func for each shape found.
 /// Only the shape's bounding boxes are checked for overlap, not their full shape.
 	void BBQuery(cpBB bb,cpLayers layers,cpGroup group,SpaceBBQueryFunc func);
@@ -149,7 +149,7 @@ public:
 	int getIterations(void);
 	void setIterations(int value);
 	cp::Vect getGravity(void);
-	void setGravity(cp::Vect value);
+	void setGravity(const cp::Vect&  value);
 	cpFloat getDamping(void);
 	void setDamping(cpFloat value);
 	cpFloat getIdleSpeedThreshold(void);
@@ -171,7 +171,8 @@ public:
 	Space(cpSpace* v);
 	Space(Space&&o);
 private:
-//Hiding copy constructor and assignmentSpace(const Space&);
+//Hiding copy constructor and assignment
+Space(const Space&);
 Space& operator=(const Space&);
 
 };

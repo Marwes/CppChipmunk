@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 17:53:27 2012.
  */
 #include "SpaceHash.hpp"
 #include <utility>

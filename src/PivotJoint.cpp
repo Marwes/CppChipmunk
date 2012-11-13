@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:09:15 2012.
  */
 #include "PivotJoint.hpp"
 #include <utility>
@@ -17,12 +17,12 @@ const cpConstraintClass *PivotJoint::getClass()
 {
 		return cpPivotJointGetClass();
 }
-PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,cp::Vect pivot)
+PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,const cp::Vect& pivot)
 	: Constraint(cpPivotJointNew(a ? a->get() : 0,b ? b->get() : 0,pivot))
 {
 		constraint->data = this;
 }
-PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2)
+PivotJoint::PivotJoint(cp::Body *a,cp::Body *b,const cp::Vect& anchr1,const cp::Vect& anchr2)
 	: Constraint(cpPivotJointNew2(a ? a->get() : 0,b ? b->get() : 0,anchr1,anchr2))
 {
 		constraint->data = this;
@@ -31,7 +31,7 @@ cp::Vect PivotJoint::getAnchr1(void)
 {
 		return cpPivotJointGetAnchr1(constraint);
 }
-void PivotJoint::setAnchr1(cp::Vect value)
+void PivotJoint::setAnchr1(const cp::Vect&  value)
 {
 		cpPivotJointSetAnchr1(constraint,value);
 }
@@ -39,7 +39,7 @@ cp::Vect PivotJoint::getAnchr2(void)
 {
 		return cpPivotJointGetAnchr2(constraint);
 }
-void PivotJoint::setAnchr2(cp::Vect value)
+void PivotJoint::setAnchr2(const cp::Vect&  value)
 {
 		cpPivotJointSetAnchr2(constraint,value);
 }

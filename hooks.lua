@@ -102,9 +102,9 @@ functionHooks = {
 			end
 			body = body:sub(1, #body - #" data,").." &handler);\n"
 
+			toCppTypes(functionArgs)
 			--remove the first paramter
 			table.remove(functionArgs, 1)
-			toCppTypes(functionArgs)
 			class:addMethod(Method:new({
 				returnType="void ",
 				name="addCollisionHandler",
@@ -392,6 +392,13 @@ functionHooks = {
 					body="this->x = cv.x; this->y = cv.y;\n", 
 					parameters={{type="cpVect ", name="cv"}}
 					}))
+				classes[struct]:addMethod(Method:new({ 
+					returnType="", 
+					name="Vect", 
+					body="this->x = cv.x; this->y = cv.y;\n", 
+					parameters={{type="const cp::Vect& ", name="cv"}}
+					}))
+
 			end
 
 			return Method:new({ 

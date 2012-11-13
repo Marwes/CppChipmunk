@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 10/04/12 20:29:34.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 21:59:52.
  */
 #pragma once
 #include "chipmunk_declarations.hpp"
@@ -34,7 +34,7 @@
 namespace cp {
 /// Calculate the moment of inertia for a circle.
 /// @c r1 and @c r2 are the inner and outer diameters. A solid circle has an inner diameter of 0.
-	inline cpFloat momentForCircle(cpFloat m,cpFloat r1,cpFloat r2,cp::Vect offset){
+	inline cpFloat momentForCircle(cpFloat m,cpFloat r1,cpFloat r2,const cp::Vect& offset){
 		return cpMomentForCircle(m,r1,r2,offset);
 }
 
@@ -46,17 +46,17 @@ namespace cp {
 
 /// Calculate the moment of inertia for a line segment.
 /// Beveling radius is not supported.
-	inline cpFloat momentForSegment(cpFloat m,cp::Vect a,cp::Vect b){
+	inline cpFloat momentForSegment(cpFloat m,const cp::Vect& a,const cp::Vect& b){
 		return cpMomentForSegment(m,a,b);
 }
 
 /// Calculate the area of a fattened (capsule shaped) line segment.
-	inline cpFloat areaForSegment(cp::Vect a,cp::Vect b,cpFloat r){
+	inline cpFloat areaForSegment(const cp::Vect& a,const cp::Vect& b,cpFloat r){
 		return cpAreaForSegment(a,b,r);
 }
 
 /// Calculate the moment of inertia for a solid polygon shape assuming it's center of gravity is at it's centroid. The offset is added to each vertex.
-	inline cpFloat momentForPoly(cpFloat m,int numVerts,const cp::Vect *verts,cp::Vect offset){
+	inline cpFloat momentForPoly(cpFloat m,int numVerts,const cp::Vect *verts,const cp::Vect& offset){
 		return cpMomentForPoly(m,numVerts,verts,offset);
 }
 
@@ -82,7 +82,7 @@ namespace cp {
 }
 
 /// Calculate the moment of inertia for a solid box.
-	inline cpFloat momentForBox2(cpFloat m,cp::BB box){
+	inline cpFloat momentForBox2(cpFloat m,const cp::BB& box){
 		return cpMomentForBox2(m,box);
 }
 
@@ -101,12 +101,12 @@ namespace cp {
 }
 
 /// Get the hit point for a segment query.
-	inline cp::Vect segmentQueryHitPoint(const cp::Vect start,const cp::Vect end,const cpSegmentQueryInfo info){
+	inline cp::Vect segmentQueryHitPoint(const cp::Vect& start,const cp::Vect& end,const cpSegmentQueryInfo info){
 		return cpSegmentQueryHitPoint(start,end,info);
 }
 
 /// Get the hit distance for a segment query.
-	inline cpFloat segmentQueryHitDist(const cp::Vect start,const cp::Vect end,const cpSegmentQueryInfo info){
+	inline cpFloat segmentQueryHitDist(const cp::Vect& start,const cp::Vect& end,const cpSegmentQueryInfo info){
 		return cpSegmentQueryHitDist(start,end,info);
 }
 

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -23,7 +23,8 @@ public:
 	Sweep1D(cpSpatialIndexBBFunc bbfunc,cp::SpatialIndex *staticIndex);
 	Sweep1D(Sweep1D&&o);
 private:
-//Hiding copy constructor and assignmentSweep1D(const Sweep1D&);
+//Hiding copy constructor and assignment
+Sweep1D(const Sweep1D&);
 Sweep1D& operator=(const Sweep1D&);
 
 };

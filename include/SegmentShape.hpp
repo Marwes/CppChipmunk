@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -20,15 +20,16 @@ public:
 		return segmentshape;
 }
 /// Allocate and initialize a segment shape.
-	SegmentShape(cp::Body *body,cp::Vect a,cp::Vect b,cpFloat radius);
-	void setNeighbors(cp::Vect prev,cp::Vect next);
+	SegmentShape(cp::Body *body,const cp::Vect& a,const cp::Vect& b,cpFloat radius);
+	void setNeighbors(const cp::Vect& prev,const cp::Vect& next);
 	cp::Vect getA(void);
 	cp::Vect getB(void);
 	cp::Vect getNormal(void);
 	cpFloat getRadius(void);
 	SegmentShape(SegmentShape&&o);
 private:
-//Hiding copy constructor and assignmentSegmentShape(const SegmentShape&);
+//Hiding copy constructor and assignment
+SegmentShape(const SegmentShape&);
 SegmentShape& operator=(const SegmentShape&);
 
 };

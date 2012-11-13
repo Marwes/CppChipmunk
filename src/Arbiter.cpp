@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:09:15 2012.
  */
 #include "Arbiter.hpp"
 #include <utility>
@@ -87,7 +87,7 @@ cp::Vect Arbiter::getSurfaceVelocity(void)
 {
 		return cpArbiterGetSurfaceVelocity(arb);
 }
-void Arbiter::setSurfaceVelocity(cp::Vect value)
+void Arbiter::setSurfaceVelocity(const cp::Vect&  value)
 {
 		cpArbiterSetSurfaceVelocity(arb,value);
 }

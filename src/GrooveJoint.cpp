@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:09:15 2012.
  */
 #include "GrooveJoint.hpp"
 #include <utility>
@@ -17,16 +17,16 @@ const cpConstraintClass *GrooveJoint::getClass()
 {
 		return cpGrooveJointGetClass();
 }
-GrooveJoint::GrooveJoint(cp::Body *a,cp::Body *b,cp::Vect groove_a,cp::Vect groove_b,cp::Vect anchr2)
+GrooveJoint::GrooveJoint(cp::Body *a,cp::Body *b,const cp::Vect& groove_a,const cp::Vect& groove_b,const cp::Vect& anchr2)
 	: Constraint(cpGrooveJointNew(a ? a->get() : 0,b ? b->get() : 0,groove_a,groove_b,anchr2))
 {
 		constraint->data = this;
 }
-void GrooveJoint::setGrooveA(cp::Vect value)
+void GrooveJoint::setGrooveA(const cp::Vect& value)
 {
 		cpGrooveJointSetGrooveA(Constraint::get(),value);
 }
-void GrooveJoint::setGrooveB(cp::Vect value)
+void GrooveJoint::setGrooveB(const cp::Vect& value)
 {
 		cpGrooveJointSetGrooveB(Constraint::get(),value);
 }
@@ -42,7 +42,7 @@ cp::Vect GrooveJoint::getAnchr2(void)
 {
 		return cpGrooveJointGetAnchr2(constraint);
 }
-void GrooveJoint::setAnchr2(cp::Vect value)
+void GrooveJoint::setAnchr2(const cp::Vect&  value)
 {
 		cpGrooveJointSetAnchr2(constraint,value);
 }

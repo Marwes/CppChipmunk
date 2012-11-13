@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 17:58:30 2012.
  */
 #include "SegmentShape.hpp"
 #include <utility>
@@ -13,12 +13,12 @@
 
 namespace cp {
 
-SegmentShape::SegmentShape(cp::Body *body,cp::Vect a,cp::Vect b,cpFloat radius)
+SegmentShape::SegmentShape(cp::Body *body,const cp::Vect& a,const cp::Vect& b,cpFloat radius)
 	: Shape(cpSegmentShapeNew(body ? body->get() : 0,a,b,radius))
 {
 		shape->data = this;
 }
-void SegmentShape::setNeighbors(cp::Vect prev,cp::Vect next)
+void SegmentShape::setNeighbors(const cp::Vect& prev,const cp::Vect& next)
 {
 		cpSegmentShapeSetNeighbors(Shape::get(),prev,next);
 }

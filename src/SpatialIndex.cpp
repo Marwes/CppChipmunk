@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 17:58:30 2012.
  */
 #include "SpatialIndex.hpp"
 #include <utility>
@@ -67,7 +67,7 @@ void SpatialIndex::reindexObject(void *obj,cpHashValue hashid)
 {
 		cpSpatialIndexReindexObject(index,obj,hashid);
 }
-void SpatialIndex::query(void *obj,cp::BB bb,cpSpatialIndexQueryFunc func,void *data)
+void SpatialIndex::query(void *obj,const cp::BB& bb,cpSpatialIndexQueryFunc func,void *data)
 {
 		cpSpatialIndexQuery(index,obj,bb,func,data);
 }
@@ -75,7 +75,7 @@ void SpatialIndex::query(void *obj,cpBB bb,SpatialIndexQueryFunc func)
 {
 		cpSpatialIndexQuery(index,obj,bb,*SpatialIndexQuery,&func);
 }
-void SpatialIndex::segmentQuery(void *obj,cp::Vect a,cp::Vect b,cpFloat t_exit,cpSpatialIndexSegmentQueryFunc func,void *data)
+void SpatialIndex::segmentQuery(void *obj,const cp::Vect& a,const cp::Vect& b,cpFloat t_exit,cpSpatialIndexSegmentQueryFunc func,void *data)
 {
 		cpSpatialIndexSegmentQuery(index,obj,a,b,t_exit,func,data);
 }

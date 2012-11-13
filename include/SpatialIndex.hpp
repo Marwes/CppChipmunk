@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -52,10 +52,10 @@ public:
 	void reindex();
 /// Reindex a single object in the spatial index.
 	void reindexObject(void *obj,cpHashValue hashid);
-	void query(void *obj,cp::BB bb,cpSpatialIndexQueryFunc func,void *data);
+	void query(void *obj,const cp::BB& bb,cpSpatialIndexQueryFunc func,void *data);
 /// Perform a rectangle query against the spatial index, calling @c func for each potential match.
 	void query(void *obj,cpBB bb,SpatialIndexQueryFunc func);
-	void segmentQuery(void *obj,cp::Vect a,cp::Vect b,cpFloat t_exit,cpSpatialIndexSegmentQueryFunc func,void *data);
+	void segmentQuery(void *obj,const cp::Vect& a,const cp::Vect& b,cpFloat t_exit,cpSpatialIndexSegmentQueryFunc func,void *data);
 /// Perform a segment query against the spatial index, calling @c func for each potential match.
 	void segmentQuery(void *obj,cpVect a,cpVect b,cpFloat t_exit,SpatialIndexSegmentQueryFunc func);
 	void reindexQuery(cpSpatialIndexQueryFunc func,void *data);
@@ -66,7 +66,8 @@ public:
 	SpatialIndex(cpSpatialIndex* v);
 	SpatialIndex(SpatialIndex&&o);
 private:
-//Hiding copy constructor and assignmentSpatialIndex(const SpatialIndex&);
+//Hiding copy constructor and assignment
+SpatialIndex(const SpatialIndex&);
 SpatialIndex& operator=(const SpatialIndex&);
 
 };

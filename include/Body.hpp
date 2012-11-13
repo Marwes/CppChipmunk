@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -53,26 +53,26 @@ public:
 /// Set the moment of a body.
 	void setMoment(cpFloat i);
 /// Set the position of a body.
-	void setPos(cp::Vect pos);
+	void setPos(const cp::Vect& pos);
 /// Set the angle of a body.
 	void setAngle(cpFloat a);
 /// Default Integration functions.
-	void updateVelocity(cp::Vect gravity,cpFloat damping,cpFloat dt);
+	void updateVelocity(const cp::Vect& gravity,cpFloat damping,cpFloat dt);
 	void updatePosition(cpFloat dt);
 /// Convert body relative/local coordinates to absolute/world coordinates.
-	cp::Vect local2World(const cp::Vect v);
+	cp::Vect local2World(const cp::Vect& v);
 /// Convert body absolute/world coordinates to  relative/local coordinates.
-	cp::Vect world2Local(const cp::Vect v);
+	cp::Vect world2Local(const cp::Vect& v);
 /// Set the forces and torque or a body to zero.
 	void resetForces();
 /// Apply an force (in world coordinates) to the body at a point relative to the center of gravity (also in world coordinates).
-	void applyForce(const cp::Vect f,const cp::Vect r);
+	void applyForce(const cp::Vect& f,const cp::Vect& r);
 /// Apply an impulse (in world coordinates) to the body at a point relative to the center of gravity (also in world coordinates).
-	void applyImpulse(const cp::Vect j,const cp::Vect r);
+	void applyImpulse(const cp::Vect& j,const cp::Vect& r);
 /// Get the velocity on a body (in world units) at a point on the body in world coordinates.
-	cp::Vect getVelAtWorldPoint(cp::Vect point);
+	cp::Vect getVelAtWorldPoint(const cp::Vect& point);
 /// Get the velocity on a body (in world units) at a point on the body in local coordinates.
-	cp::Vect getVelAtLocalPoint(cp::Vect point);
+	cp::Vect getVelAtLocalPoint(const cp::Vect& point);
 /// Get the kinetic energy of a body.
 	cpFloat kineticEnergy();
 	void eachShape(cpBodyShapeIteratorFunc func,void *data);
@@ -89,9 +89,9 @@ public:
 	cpFloat getMoment(void);
 	cp::Vect getPos(void);
 	cp::Vect getVel(void);
-	void setVel(cp::Vect value);
+	void setVel(const cp::Vect&  value);
 	cp::Vect getForce(void);
-	void setForce(cp::Vect value);
+	void setForce(const cp::Vect&  value);
 	cpFloat getAngle(void);
 	cpFloat getAngVel(void);
 	void setAngVel(cpFloat value);
@@ -107,7 +107,8 @@ public:
 	Body(cpBody* v);
 	Body(Body&&o);
 private:
-//Hiding copy constructor and assignmentBody(const Body&);
+//Hiding copy constructor and assignment
+Body(const Body&);
 Body& operator=(const Body&);
 
 };

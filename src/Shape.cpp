@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:09:15 2012.
  */
 #include "Shape.hpp"
 #include <utility>
@@ -22,19 +22,19 @@ cp::BB Shape::cacheBB()
 {
 		return cpShapeCacheBB(shape);
 }
-cp::BB Shape::update(cp::Vect pos,cp::Vect rot)
+cp::BB Shape::update(const cp::Vect& pos,const cp::Vect& rot)
 {
 		return cpShapeUpdate(shape,pos,rot);
 }
-cpBool Shape::pointQuery(cp::Vect p)
+cpBool Shape::pointQuery(const cp::Vect& p)
 {
 		return cpShapePointQuery(shape,p);
 }
-cpFloat Shape::nearestPointQuery(cp::Vect p,cpNearestPointQueryInfo *out)
+cpFloat Shape::nearestPointQuery(const cp::Vect& p,cpNearestPointQueryInfo *out)
 {
 		return cpShapeNearestPointQuery(shape,p,out);
 }
-cpBool Shape::segmentQuery(cp::Vect a,cp::Vect b,cpSegmentQueryInfo *info)
+cpBool Shape::segmentQuery(const cp::Vect& a,const cp::Vect& b,cpSegmentQueryInfo *info)
 {
 		return cpShapeSegmentQuery(shape,a,b,info);
 }
@@ -84,7 +84,7 @@ cp::Vect Shape::getSurfaceVelocity(void)
 {
 		return cpShapeGetSurfaceVelocity(shape);
 }
-void Shape::setSurfaceVelocity(cp::Vect value)
+void Shape::setSurfaceVelocity(const cp::Vect&  value)
 {
 		cpShapeSetSurfaceVelocity(shape,value);
 }

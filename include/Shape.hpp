@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -24,14 +24,14 @@ public:
 /// Update, cache and return the bounding box of a shape based on the body it's attached to.
 	cp::BB cacheBB();
 /// Update, cache and return the bounding box of a shape with an explicit transformation.
-	cp::BB update(cp::Vect pos,cp::Vect rot);
+	cp::BB update(const cp::Vect& pos,const cp::Vect& rot);
 /// Test if a point lies within a shape.
-	cpBool pointQuery(cp::Vect p);
+	cpBool pointQuery(const cp::Vect& p);
 /// Perform a nearest point query. It finds the closest point on the surface of shape to a specific point.
 /// The value returned is the distance between the points. A negative distance means the point is inside the shape.
-	cpFloat nearestPointQuery(cp::Vect p,cpNearestPointQueryInfo *out);
+	cpFloat nearestPointQuery(const cp::Vect& p,cpNearestPointQueryInfo *out);
 /// Perform a segment query against a shape. @c info must be a pointer to a valid cpSegmentQueryInfo structure.
-	cpBool segmentQuery(cp::Vect a,cp::Vect b,cpSegmentQueryInfo *info);
+	cpBool segmentQuery(const cp::Vect& a,const cp::Vect& b,cpSegmentQueryInfo *info);
 	void setBody(cp::Body *body);
 	cp::Space* getSpace(void);
 	cp::Body* getBody(void);
@@ -43,7 +43,7 @@ public:
 	cpFloat getFriction(void);
 	void setFriction(cpFloat value);
 	cp::Vect getSurfaceVelocity(void);
-	void setSurfaceVelocity(cp::Vect value);
+	void setSurfaceVelocity(const cp::Vect&  value);
 	cpDataPointer getUserData(void);
 	void setUserData(cpDataPointer value);
 	cpCollisionType getCollisionType(void);
@@ -55,7 +55,8 @@ public:
 	Shape(cpShape* v);
 	Shape(Shape&&o);
 private:
-//Hiding copy constructor and assignmentShape(const Shape&);
+//Hiding copy constructor and assignment
+Shape(const Shape&);
 Shape& operator=(const Shape&);
 
 };

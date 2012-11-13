@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:09:15 2012.
  */
 #include "SlideJoint.hpp"
 #include <utility>
@@ -17,7 +17,7 @@ const cpConstraintClass *SlideJoint::getClass()
 {
 		return cpSlideJointGetClass();
 }
-SlideJoint::SlideJoint(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2,cpFloat min,cpFloat max)
+SlideJoint::SlideJoint(cp::Body *a,cp::Body *b,const cp::Vect& anchr1,const cp::Vect& anchr2,cpFloat min,cpFloat max)
 	: Constraint(cpSlideJointNew(a ? a->get() : 0,b ? b->get() : 0,anchr1,anchr2,min,max))
 {
 		constraint->data = this;
@@ -26,7 +26,7 @@ cp::Vect SlideJoint::getAnchr1(void)
 {
 		return cpSlideJointGetAnchr1(constraint);
 }
-void SlideJoint::setAnchr1(cp::Vect value)
+void SlideJoint::setAnchr1(const cp::Vect&  value)
 {
 		cpSlideJointSetAnchr1(constraint,value);
 }
@@ -34,7 +34,7 @@ cp::Vect SlideJoint::getAnchr2(void)
 {
 		return cpSlideJointGetAnchr2(constraint);
 }
-void SlideJoint::setAnchr2(cp::Vect value)
+void SlideJoint::setAnchr2(const cp::Vect&  value)
 {
 		cpSlideJointSetAnchr2(constraint,value);
 }

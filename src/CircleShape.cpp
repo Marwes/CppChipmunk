@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 17:58:30 2012.
  */
 #include "CircleShape.hpp"
 #include <utility>
@@ -13,7 +13,7 @@
 
 namespace cp {
 
-CircleShape::CircleShape(cp::Body *body,cpFloat radius,cp::Vect offset)
+CircleShape::CircleShape(cp::Body *body,cpFloat radius,const cp::Vect& offset)
 	: Shape(cpCircleShapeNew(body ? body->get() : 0,radius,offset))
 {
 		shape->data = this;

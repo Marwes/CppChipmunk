@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:01:44.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -57,11 +57,12 @@ public:
 	cpFloat getFriction(void);
 	void setFriction(cpFloat value);
 	cp::Vect getSurfaceVelocity(void);
-	void setSurfaceVelocity(cp::Vect value);
+	void setSurfaceVelocity(const cp::Vect&  value);
 	Arbiter(cpArbiter* v);
 	Arbiter(Arbiter&&o);
 private:
-//Hiding copy constructor and assignmentArbiter(const Arbiter&);
+//Hiding copy constructor and assignment
+Arbiter(const Arbiter&);
 Arbiter& operator=(const Arbiter&);
 
 };

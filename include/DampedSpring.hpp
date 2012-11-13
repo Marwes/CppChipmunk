@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:02:18.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
  */
 #pragma once
 
@@ -21,11 +21,11 @@ public:
 }
 	const cpConstraintClass *getClass();
 /// Allocate and initialize a damped spring.
-	DampedSpring(cp::Body *a,cp::Body *b,cp::Vect anchr1,cp::Vect anchr2,cpFloat restLength,cpFloat stiffness,cpFloat damping);
+	DampedSpring(cp::Body *a,cp::Body *b,const cp::Vect& anchr1,const cp::Vect& anchr2,cpFloat restLength,cpFloat stiffness,cpFloat damping);
 	cp::Vect getAnchr1(void);
-	void setAnchr1(cp::Vect value);
+	void setAnchr1(const cp::Vect&  value);
 	cp::Vect getAnchr2(void);
-	void setAnchr2(cp::Vect value);
+	void setAnchr2(const cp::Vect&  value);
 	cpFloat getRestLength(void);
 	void setRestLength(cpFloat value);
 	cpFloat getStiffness(void);
@@ -36,7 +36,8 @@ public:
 	void setSpringForceFunc(cpDampedSpringForceFunc value);
 	DampedSpring(DampedSpring&&o);
 private:
-//Hiding copy constructor and assignmentDampedSpring(const DampedSpring&);
+//Hiding copy constructor and assignment
+DampedSpring(const DampedSpring&);
 DampedSpring& operator=(const DampedSpring&);
 
 };

@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/12/12 01:17:41.
+ * Chipmunk binding for C++ automatically generated on Mon Nov 12 17:58:30 2012.
  */
 #include "PolyShape.hpp"
 #include <utility>
@@ -23,7 +23,7 @@ PolyShape::PolyShape(cp::Body *body,cpFloat width,cpFloat height)
 {
 		shape->data = this;
 }
-PolyShape::PolyShape(cp::Body *body,cp::BB box)
+PolyShape::PolyShape(cp::Body *body,const cp::BB& box)
 	: Shape(cpBoxShapeNew2(body ? body->get() : 0,box))
 {
 		shape->data = this;
