@@ -153,15 +153,17 @@ function Class:addMoveConstructor()
 				body = body.."\t\to."..member.name.." = 0;\n"
 			end
 		end
+
 	end
-	out = out.."\t}\n"
+	if self.hasDataPointer then
+		body = body.."\t\tget()->data = this;\n"
+	end
 
 	self:addMethod(Method:new({
 			returnType="", name=self.name, 
 			body=body, parameters={{name="o", type=self.name.."&&"}},
 			initializerList=initializerList
 		}))
-	return out
 end
 
 function Class:makeClassBody( )

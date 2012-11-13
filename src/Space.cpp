@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on Mon Nov 12 18:09:15 2012.
+ * Chipmunk binding for C++ automatically generated on 11/13/12 22:20:21.
  */
 #include "Space.hpp"
 #include <utility>
@@ -337,6 +337,7 @@ Space::Space(Space&&o)
 				o.space = 0;
 		o.data = 0;
 		o.body = 0;
+		get()->data = this;
 }
 };//namespace cp
 namespace {
