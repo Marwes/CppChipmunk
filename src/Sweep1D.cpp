@@ -1,7 +1,7 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on Mon Nov 12 17:53:27 2012.
+ * Chipmunk binding for C++ automatically generated on 12/12/12 16:10:03.
  */
 #include "Sweep1D.hpp"
 #include <utility>

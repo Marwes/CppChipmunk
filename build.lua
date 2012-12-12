@@ -1,17 +1,33 @@
 --Configuration
-recursive = true
-directory = "."
-outFolder = ""
-chipmunkPath = "../Chipmunk-6.1.1/include/chipmunk"
-namespace = "cp"
-parseChipmunkPrivate = false
+recursive = true --Set this to false to skip subfolders (constraints/)
+CPP0X = true --Set this to false if you compiler do not support move constructors or std::function
+USE_UNORDERED_MAP = false --A value of false means that std::map is used instead of std::unordered_map
+outFolder = "" --Where to put the generated files (actuall put in the subfolders src/ and include/)
+chipmunkPath = "../Chipmunk-6.1.1/include/chipmunk" --where the headers for chipmunk are
+namespace = "cp" --The namespace to use for the output files
+parseChipmunkPrivate = false --If the file chipmunk_private.h are to be parsed
+---------------------------------------------------------------------
+
 
 additionalFiles = {
 	["chipmunk.h"]=true,
 	["chipmunk_private.h"]=parseChipmunkPrivate
 }
-
-
+local collisionTypePair = "std::pair<cpCollisionType, cpCollisionType>"
+if CPP0X and USE_UNORDERED_MAP then
+	COLLISIONHANDLER_MAP = "std::unordered_map<std::pair<cpCollisionType, cpCollisionType>,CollisionHandler, HashFunctor> "
+	COLLISIONHANDLER_CMP = 	[[struct HashFunctor {
+		size_t operator()(const std::pair<cpCollisionType, cpCollisionType> p) const
+		{
+			return (size_t)(p.first)*3344921057ul ^ (size_t)(p.second)*3344921057ul;
+		}
+	};]]
+	COLLISIONHANDLER_INCLUDE = "unordered_map"
+else
+	COLLISIONHANDLER_MAP = "std::map<std::pair<cpCollisionType, cpCollisionType>, CollisionHandler> "
+	COLLISIONHANDLER_CMP = ""
+	COLLISIONHANDLER_INCLUDE = "map"
+end
 
 local io = require "io"
 local table = require "table"
@@ -343,7 +359,6 @@ function getMethodInfo(func )
 		local methodName = func:gsub("^cpv", "cpVect")
 		return methodName:sub(1,1):lower()..methodName:sub(2), "cpVect"
 	end
-	print("Could not find class for function:", func)
 	return func
 end
 

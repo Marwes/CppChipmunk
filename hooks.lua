@@ -9,13 +9,14 @@ functionHooks = {
 	,
 	function ( returnType, functionName, argTable  )
 		if functionName == "cpSpaceRemoveCollisionHandler" then
+			if not CPP0X then return end
 			local methodName, struct = getMethodInfo(functionName)
 			local class = classes[struct]
 			table.insert(class.members, {
-				type="std::unordered_map<std::pair<cpCollisionType, cpCollisionType>,CollisionHandler, HashFunctor> ",
+				type=COLLISIONHANDLER_MAP,
 				name="collisionHandlers"
 			})
-			table.insert(class.includes, "#include <unordered_map>\n")
+			table.insert(class.includes, "#include <"..COLLISIONHANDLER_INCLUDE..">\n")
 
 			local body = "collisionHandlers.erase(std::make_pair(a, b));\n"
 			body = body..functionName.."("..makeArguments(argTable)..");\n"
@@ -32,6 +33,7 @@ functionHooks = {
 	end
 	,
 	function ( returnType, functionName, argTable )
+		if not CPP0X then return end
 		if functionName == "cpSpaceAddCollisionHandler" then
 
 			local methodName, struct = getMethodInfo(functionName)
@@ -44,14 +46,8 @@ functionHooks = {
 		std::function<void (cp::Arbiter *arb, cp::Space *space, void *data)> separate;
 		cpDataPointer data;
 	};
-
-	struct HashFunctor {
-		size_t operator()(const std::pair<cpCollisionType, cpCollisionType> p) const
-		{
-			return (size_t)(p.first)*3344921057ul ^ (size_t)(p.second)*3344921057ul;
-		}
-	};
 ]]
+..COLLISIONHANDLER_CMP
 			local functionArgs = copyTable(argTable)
 			local body = 
 			[[CollisionHandler& handler = collisionHandlers[std::make_pair(a,b)];
@@ -248,16 +244,26 @@ functionHooks = {
 				if argTable[1].name == "dynamicIndex" then argTable[1].name = "index" end
 				local originalArgTable = copyTable(argTable)
 
+				if not CPP0X then return end -- skip std::function when not using c++0x
+
 				local makeFunction = false
 				for _,v in ipairs(argTable) do if v.name == "data" then makeFunction = true end end
-				if not makeFunction then print("Skipping std::function for : ", functionName) return end
+				if not makeFunction then
+					print("Skipping std::function for : ", functionName)
+					return 
+				end
+
 				makeFunction = false
 				for _,v in ipairs(argTable) do if v.name == "func" then makeFunction = true end end
-				if not makeFunction then print("Skipping std::function for : ", functionName) return end
+				if not makeFunction then
+					print("Skipping std::function for : ", functionName)
+					return
+				end
 
 				local methodName, struct = getMethodInfo(functionName)
-				classes[struct].includes["functional"] = "#include <functional>\n"
-
+				if CPP0X then
+					classes[struct].includes["functional"] = "#include <functional>\n"
+				end
 				local typedef = functionTypedefs[v1["type"]:gsub("%s", "")]
 				local functionReturnType = typedef.returnType
 				local functionArgs = typedef.args

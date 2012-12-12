@@ -123,6 +123,8 @@ end
 
 
 function Class:addMoveConstructor()
+	if not CPP0X then return end
+	
 	local initializerList = {}
 
 	if self.members then

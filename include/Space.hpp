@@ -1,14 +1,14 @@
 /* 
  * Licensed under the MIT License (See the file LICENSE in the root directory).
  *
- * Chipmunk binding for C++ automatically generated on 11/13/12 22:00:09.
+ * Chipmunk binding for C++ automatically generated on 12/12/12 16:13:07.
  */
 #pragma once
 
 #include <utility>
 #include "chipmunk.h"
 #include "chipmunk_declarations.hpp"
-#include <unordered_map>
+#include <map>
 #include <functional>
 
 namespace cp {
@@ -18,13 +18,6 @@ namespace cp {
 		std::function<void (cp::Arbiter *arb, cp::Space *space, void *data)> postSolve;
 		std::function<void (cp::Arbiter *arb, cp::Space *space, void *data)> separate;
 		cpDataPointer data;
-	};
-
-	struct HashFunctor {
-		size_t operator()(const std::pair<cpCollisionType, cpCollisionType> p) const
-		{
-			return (size_t)(p.first)*3344921057ul ^ (size_t)(p.second)*3344921057ul;
-		}
 	};
 	typedef std::function<cpBool (cp::Arbiter *,cp::Space *,void *)> CollisionBeginFunc ;
 	typedef std::function<cpBool (cp::Arbiter *,cp::Space *,void *)> CollisionPreSolveFunc ;
@@ -54,7 +47,7 @@ protected:
 	cpSpace* space;
 	cpDataPointer data;
 	cp::Body* body;
-	std::unordered_map<std::pair<cpCollisionType, cpCollisionType>,CollisionHandler, HashFunctor>  collisionHandlers;
+	std::map<std::pair<cpCollisionType, cpCollisionType>, CollisionHandler>  collisionHandlers;
 public:
 	inline cpSpace* get(){
 		return space;
